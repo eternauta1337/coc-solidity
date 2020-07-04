@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as yaml from 'yaml-js';
 import { Package } from './model/package';
-// import {Project} from './model/project';
+import { Project } from './model/project';
 
 // TODO: These are temporary constants until standard agreed
 // A project standard is needed so each project can define where it store its project dependencies
@@ -59,54 +59,53 @@ export function initialiseProject(rootPath: string, packageDefaultDependenciesDi
   packageDependenciesDirectory = packageDefaultDependenciesDirectory;
   packageDependenciesContractsDirectory = packageDefaultDependenciesContractsDirectory;
   const projectPackage = createProjectPackage(rootPath);
-  console.log('projectPackage name:', projectPackage.name) // TODO: Port point ajs
-//     const dependencies = loadDependencies(rootPath, projectPackage);
-//     const packagesDirAbsolutePath = path.join(rootPath, packageDependenciesDirectory);
-//     return new Project(projectPackage, dependencies, packagesDirAbsolutePath);
+  const dependencies = loadDependencies(rootPath, projectPackage);
+  const packagesDirAbsolutePath = path.join(rootPath, packageDependenciesDirectory);
+  return new Project(projectPackage, dependencies, packagesDirAbsolutePath);
 }
 
-// function loadDependencies(rootPath: string, projectPackage: Package, depPackages: Array<Package> = new Array<Package>()) {
-//     if (projectPackage.dependencies !== undefined) {
-//         Object.keys(projectPackage.dependencies).forEach(dependency => {
-//             if (!depPackages.some((existingDepPack: Package) => existingDepPack.name === dependency)) {
-//                 const depPackageDependencyPath = path.join(rootPath, packageDependenciesDirectory, dependency);
-//                 const depPackage = createPackage(depPackageDependencyPath);
+function loadDependencies(rootPath: string, projectPackage: Package, depPackages: Array<Package> = new Array<Package>()) {
+  if (projectPackage.dependencies !== undefined) {
+    Object.keys(projectPackage.dependencies).forEach(dependency => {
+      if (!depPackages.some((existingDepPack: Package) => existingDepPack.name === dependency)) {
+        const depPackageDependencyPath = path.join(rootPath, packageDependenciesDirectory, dependency);
+        const depPackage = createPackage(depPackageDependencyPath);
 
-//                 if (depPackage !== null) {
-//                     depPackages.push(depPackage);
-//                     // Assumed the package manager will install all the dependencies at root so adding all the existing ones
-//                     loadDependencies(rootPath, depPackage, depPackages);
-//                 } else {
-//                     // should warn user of a package dependency missing
-//                 }
-//             }
-//         });
-//     }
-//     // lets not skip packages in lib
-//     const depPackagePath = path.join(projectPackage.absoluletPath, packageDependenciesDirectory);
-//     if (fs.existsSync(depPackagePath)) {
-//         const depPackagesDirectories = getDirectories(depPackagePath);
-//         depPackagesDirectories.forEach(depPackageDir => {
-//             const fullPath = path.join(depPackagePath, depPackageDir);
-//             let depPackage = createPackage(fullPath);
-//             if (depPackage == null) {
-//                 depPackage = createDefaultPackage(fullPath);
-//             }
-//             if (!depPackages.some((existingDepPack: Package) => existingDepPack.name === depPackage.name)) {
-//                 depPackages.push(depPackage);
-//                     loadDependencies(rootPath, depPackage, depPackages);
-//             }
-//         });
-//     }
-//     return depPackages;
-// }
+        if (depPackage !== null) {
+          depPackages.push(depPackage);
+          // Assumed the package manager will install all the dependencies at root so adding all the existing ones
+          loadDependencies(rootPath, depPackage, depPackages);
+        } else {
+          // should warn user of a package dependency missing
+        }
+      }
+    });
+  }
+  // lets not skip packages in lib
+  const depPackagePath = path.join(projectPackage.absoluletPath, packageDependenciesDirectory);
+  if (fs.existsSync(depPackagePath)) {
+    const depPackagesDirectories = getDirectories(depPackagePath);
+    depPackagesDirectories.forEach(depPackageDir => {
+      const fullPath = path.join(depPackagePath, depPackageDir);
+      let depPackage = createPackage(fullPath);
+      if (depPackage == null) {
+        depPackage = createDefaultPackage(fullPath);
+      }
+      if (!depPackages.some((existingDepPack: Package) => existingDepPack.name === depPackage!.name)) {
+        depPackages.push(depPackage);
+          loadDependencies(rootPath, depPackage, depPackages);
+      }
+    });
+  }
+  return depPackages;
+}
 
-// function getDirectories(dirPath: string): string[] {
-//   return fs.readdirSync(dirPath).filter(function (file) {
-//     const subdirPath = path.join(dirPath, file);
-//     return fs.statSync(subdirPath).isDirectory();
-//   });
-// }
+function getDirectories(dirPath: string): string[] {
+  return fs.readdirSync(dirPath).filter(function (file) {
+    const subdirPath = path.join(dirPath, file);
+    return fs.statSync(subdirPath).isDirectory();
+  });
+}
 
 function createDefaultPackage(packagePath: string): Package {
   const defaultPackage = new Package(packageDependenciesContractsDirectory);

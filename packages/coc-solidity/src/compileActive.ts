@@ -40,7 +40,7 @@ export async function compileActiveContract(compiler: Compiler): Promise<Array<s
   const projectUri = coc.workspace.workspaceFolders[0].uri
   const projectPath = URI.parse(projectUri).fsPath
   const project = initialiseProject(projectPath, packageDefaultDependenciesDirectory!, packageDefaultDependenciesContractsDirectory!);
-  // console.log(project) // TODO: Port point ajs
+  console.log(project) // TODO: Port point ajs
   // const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
   // const packagesPath = formatPath(project.packagesDir);
 
