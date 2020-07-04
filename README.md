@@ -1,5 +1,6 @@
 # coc-solidity
-### Work in progress!!
+
+### Work in progress!! :construction:
 
 > fork from [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity) at [this commit](https://github.com/juanfranblanco/vscode-solidity/commit/2b87c8f3b794febc52eede4acd09642c2726e792)
 
@@ -22,7 +23,7 @@ Port of Juan Blanco's Solidity plugin for VSCode to vim8/neovim, based on [coc.n
   * Additionally, comparing commits in coc-spell-checker could provide additional insights for how to port.
 * After coc-solidity is functional, packages/coc-solidity should be hoisted up a level and packages/ deleted.
 
-#### Porting tips
+### Porting tips
 
 **Compiling the extension**
 * `cd packages/coc-solidity`
