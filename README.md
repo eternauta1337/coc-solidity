@@ -1,6 +1,6 @@
 # coc-solidity
 
-### Work in progress!! :construction:
+### :construction: :construction: :construction: Work in progress!! :construction: :construction: :construction:
 
 > fork from [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity) at [this commit](https://github.com/juanfranblanco/vscode-solidity/commit/2b87c8f3b794febc52eede4acd09642c2726e792)
 
