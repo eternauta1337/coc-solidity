@@ -5,14 +5,18 @@ import {
 import { Compiler } from './compiler';
 import { compileActiveContract, initDiagnosticCollection } from './compileActive';
 
+// Port: Hack to hook up console.log to coc.nvim's logger.
 const logger = require('coc.nvim/lib/util/logger')('workspace')
+console.log = (...args) => {
+  logger.info(...args)
+}
 
 let diagnosticCollection: coc.DiagnosticCollection
 let compiler: Compiler
 
 export async function activate(context: coc.ExtensionContext): Promise<void> {
   coc.workspace.showMessage(`coc-solidity works!`);
-  logger.info('>>> coc-solidity activate called');
+  console.info('>>> coc-solidity activate called');
 
   const ws: WorkspaceFolder[] = coc.workspace.workspaceFolders;
   diagnosticCollection = coc.languages.createDiagnosticCollection('solidity');

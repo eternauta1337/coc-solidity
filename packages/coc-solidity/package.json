@@ -33,12 +33,96 @@
   "contributes": {
     "configuration": {
       "type": "object",
-      "title": "coc-solidity configuration",
+      "title": "Solidity configuration",
       "properties": {
-        "coc-solidity.enabled": {
+        "solidity.enableLocalNodeCompiler": {
           "type": "boolean",
           "default": true,
-          "description": "Enable coc-solidity extension"
+          "description": "If enabled (default true) and a solc version is found in the workspace folder 'node_modules', it will use that version of solc, overriding local or remote settings'"
+        },
+        "solidity.compileUsingRemoteVersion": {
+          "type": "string",
+          "default": "",
+          "description": "Compile downloading a remote solc binary file, for example: 'latest' or 'v0.4.3+commit.2353da71', use the command 'Solidity: Get solidity releases' to list all versions"
+        },
+        "solidity.compilerOptimization": {
+          "type": "number",
+          "default": 200,
+          "description": "Optimize for how many times you intend to run the code. Lower values will optimize more for initial deployment cost, higher values will optimize more for high-frequency usage."
+        },
+        "solidity.compileUsingLocalVersion": {
+          "type": "string",
+          "default": "",
+          "description": "Compile using a local solc binary file, please include the path of the file if wanted: 'C://v0.4.3+commit.2353da71.js'"
+        },
+        "solidity.linter": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "default": "solium",
+          "description": "Enables solhint linting. Possible options 'solhint' and 'solium'"
+        },
+        "solidity.solhintRules": {
+          "type": [
+            "object"
+          ],
+          "default": null,
+          "description": "Solhint linting validation rules"
+        },
+        "solidity.formatter": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "description": "Enables / disables the solidity formatter (prettier solidity default)"
+        },
+        "solidity.enabledSolium": {
+          "type": [
+            "boolean"
+          ],
+          "default": false,
+          "description": "Enables solium linting. DEPRECATED: Use \"linter\" instead"
+        },
+        "solidity.soliumRules": {
+          "type": [
+            "object"
+          ],
+          "default": {
+            "imports-on-top": 0,
+            "variable-declarations": 0,
+            "indentation": [
+              "off",
+              4
+            ],
+            "quotes": [
+              "off",
+              "double"
+            ]
+          },
+          "description": "Solium linting validation rules"
+        },
+        "solidity.enabledAsYouTypeCompilationErrorCheck": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables as you type compilation of the document and error highlighting"
+        },
+        "solidity.validationDelay": {
+          "type": "number",
+          "default": 1500,
+          "description": "Delay to trigger the validation of the changes of the current document (compilation, solium)"
+        },
+        "solidity.packageDefaultDependenciesDirectory": {
+          "type": "string",
+          "default": "node_modules",
+          "description": "Default directory for Packages Dependencies, i.e: 'node_modules', 'lib'. This is used to avoid typing imports with that path prefix"
+        },
+        "solidity.packageDefaultDependenciesContractsDirectory": {
+          "type": "string",
+          "default": "contracts",
+          "description": "Default directory where the Package Dependency store its contracts, i.e: 'src', 'contracts', or just a blank string '', this is used to avoid typing imports with subfolder paths"
         }
       }
     },
@@ -48,5 +132,8 @@
         "title": ""
       }
     ]
+  },
+  "dependencies": {
+    "yaml-js": "^0.2.3"
   }
 }

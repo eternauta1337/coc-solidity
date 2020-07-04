@@ -2,8 +2,8 @@ import * as coc from 'coc.nvim';
 import { Compiler } from './compiler';
 import { ContractCollection } from './model/contractsCollection';
 import { URI } from 'vscode-uri'
-
-const logger = require('coc.nvim/lib/util/logger')('workspace')
+import { initialiseProject } from './projectService';
+// import { formatPath } from './util';
 
 let diagnosticCollection: coc.DiagnosticCollection;
 
@@ -23,7 +23,7 @@ export async function compileActiveContract(compiler: Compiler): Promise<Array<s
     return null;
   }
 
-  // // Check if is folder, if not stop we need to output to a bin folder on rootPath
+  // Check if is folder, if not stop we need to output to a bin folder on rootPath
   if (coc.workspace.workspaceFolders[0] == undefined) {
     coc.workspace.showMessage('Please open a folder in Vim as a workspace');
     return null;
@@ -34,10 +34,13 @@ export async function compileActiveContract(compiler: Compiler): Promise<Array<s
   const contractUri = URI.parse(editor.uri)
   const contractPath = contractUri.fsPath
 
-  // const packageDefaultDependenciesDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesDirectory');
-  // const packageDefaultDependenciesContractsDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesContractsDirectory');
-  // const compilationOptimisation = vscode.workspace.getConfiguration('solidity').get<number>('compilerOptimization');
-  // const project = initialiseProject(vscode.workspace.workspaceFolders[0].uri.fsPath, packageDefaultDependenciesDirectory, packageDefaultDependenciesContractsDirectory);
+  const packageDefaultDependenciesDirectory = coc.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesDirectory');
+  const packageDefaultDependenciesContractsDirectory = coc.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesContractsDirectory');
+  const compilationOptimisation = coc.workspace.getConfiguration('solidity').get<number>('compilerOptimization');
+  const projectUri = coc.workspace.workspaceFolders[0].uri
+  const projectPath = URI.parse(projectUri).fsPath
+  const project = initialiseProject(projectPath, packageDefaultDependenciesDirectory!, packageDefaultDependenciesContractsDirectory!);
+  // console.log(project) // TODO: Port point ajs
   // const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
   // const packagesPath = formatPath(project.packagesDir);
 
