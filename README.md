@@ -21,3 +21,23 @@ Port of Juan Blanco's Solidity plugin for VSCode to vim8/neovim, based on [coc.n
   * Use your favorite diff viewer to see what gets changed to port an extension.
   * Additionally, comparing commits in coc-spell-checker could provide additional insights for how to port.
 * After coc-solidity is functional, packages/coc-solidity should be hoisted up a level and packages/ deleted.
+
+#### Porting tips
+
+**Compiling the extension**
+* `cd packages/coc-solidity`
+* `yarn watch`
+
+**Running the extension**
+* Open a project that has Solidity contracts.
+* If you did the `set runtimepath` thing correctly, you should see a `coc-solidity works!` message when vim starts.
+* You can reload the extension in the test project with `:CocList extensions`, pick the extension, then `TAB`, then `a` for reload.
+
+**Seeing logger.info() output**
+* Once running, coc's logger creates a file (in my case) `/run/usr/1000/coc-nvim-#.log`.
+* Tail it :D
+* Watch the extension code and reload it with `:CocList extensions` in the sample project.
+
+#### Docs
+* [vscode-extensions-docs](https://www.google.com/search?client=firefox-b-d&q=vscode+extension+api)
+* [coc-extensions-docs](https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions)

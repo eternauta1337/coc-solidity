@@ -22,7 +22,6 @@ export async function activate(context: vscode.ExtensionContext) {
     console.log('>>> vscode-solidity activate')
 
     const ws: WorkspaceFolder[] | undefined = workspace.workspaceFolders;
-    console.log(ws)
     diagnosticCollection = vscode.languages.createDiagnosticCollection('solidity');
     compiler = new Compiler(context.extensionPath);
 
