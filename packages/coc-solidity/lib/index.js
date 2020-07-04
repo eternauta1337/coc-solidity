@@ -112,14 +112,19 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const coc = __importStar(__webpack_require__(1));
+const compiler_1 = __webpack_require__(95);
+// import { compileActiveContract, initDiagnosticCollection } from './compileActive';
 const logger = __webpack_require__(2)('workspace');
 let diagnosticCollection;
+let compiler;
 async function activate(context) {
     coc.workspace.showMessage(`coc-solidity works!`);
     logger.info('>>> coc-solidity activate called');
     const ws = coc.workspace.workspaceFolders;
     diagnosticCollection = coc.languages.createDiagnosticCollection('solidity');
-    // compiler = new Compiler(context.extensionPath);
+    compiler = new compiler_1.Compiler(context.extensionPath);
+    context.subscriptions.push(diagnosticCollection);
+    // initDiagnosticCollection(diagnosticCollection);
 }
 exports.activate = activate;
 
@@ -8970,6 +8975,43 @@ module.exports = function getLogger(logger4js, options) {
     return next();
   };
 };
+
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Compiler = void 0;
+const coc = __importStar(__webpack_require__(1));
+class Compiler {
+    constructor(solcCachePath) {
+        this.solcCachePath = solcCachePath;
+        this.outputChannel = coc.workspace.createOutputChannel('solidity compilation');
+    }
+}
+exports.Compiler = Compiler;
 
 
 /***/ })
