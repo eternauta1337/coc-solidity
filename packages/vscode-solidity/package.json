@@ -1,0 +1,461 @@
+{
+  "name": "solidity",
+  "description": "Ethereum Solidity Language for Visual Studio Code",
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "blockchain",
+    "compiler",
+    "solium",
+    "nethereum",
+    "solhint"
+  ],
+  "version": "0.0.74",
+  "publisher": "JuanBlanco",
+  "engines": {
+    "vscode": "^1.30.0"
+  },
+  "contributors": [
+    "Juan Blanco"
+  ],
+  "bugs": {
+    "url": "https://github.com/juanfranblanco/vscode-solidity/issues"
+  },
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/juanfranblanco/vscode-solidity"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "activationEvents": [
+    "onLanguage:solidity",
+    "onCommand:solidity.compile",
+    "onCommand:solidity.codegenNethereumCodeGenSettings",
+    "onCommand:solidity.compile.active",
+    "onCommand:solidity.codegenCSharpProject",
+    "onCommand:solidity.codegenVbNetProject",
+    "onCommand:solidity.codegenFSharpProject",
+    "onCommand:solidity.codegenCSharpProjectAll",
+    "onCommand:solidity.codegenVbNetProjectAll",
+    "onCommand:solidity.codegenFSharpProjectAll",
+    "onCommand:solidity.fixDocument"
+  ],
+  "main": "./out/src/extension",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "nyc --require ts-node/register --require source-map-support/register mocha test/**/*.spec.ts"
+  },
+  "dependencies": {
+    "ajv": "^6.10.2",
+    "ajv-keywords": "^3.4.1",
+    "chai": "^4.2.0",
+    "find-cache-dir": "^2.1.0",
+    "fs-extra": "^4.0.3",
+    "mkdirp": "^0.5.1",
+    "nethereum-codegen": "^1.0.12",
+    "prettier": "^2.0.2",
+    "prettier-plugin-solidity": "1.0.0-alpha.54",
+    "require-from-string": "^2.0.2",
+    "solc": "^0.6.9",
+    "solhint": "^3.0.0",
+    "solium": "^1.2.5",
+    "solparse": "^2.2.8",
+    "vscode-languageclient": "^5.2.1",
+    "vscode-languageserver": "^5.2.1",
+    "yaml-js": "0.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^11.15.3",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.20.1",
+    "typescript": "^3.7.3",
+    "vscode": "^1.1.36"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "out",
+      "dist"
+    ],
+    "all": true
+  },
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Solidity configuration",
+      "properties": {
+        "solidity.enableLocalNodeCompiler": {
+          "type": "boolean",
+          "default": true,
+          "description": "If enabled (default true) and a solc version is found in the workspace folder 'node_modules', it will use that version of solc, overriding local or remote settings'"
+        },
+        "solidity.compileUsingRemoteVersion": {
+          "type": "string",
+          "default": "",
+          "description": "Compile downloading a remote solc binary file, for example: 'latest' or 'v0.4.3+commit.2353da71', use the command 'Solidity: Get solidity releases' to list all versions"
+        },
+        "solidity.compilerOptimization": {
+          "type": "number",
+          "default": 200,
+          "description": "Optimize for how many times you intend to run the code. Lower values will optimize more for initial deployment cost, higher values will optimize more for high-frequency usage."
+        },
+        "solidity.compileUsingLocalVersion": {
+          "type": "string",
+          "default": "",
+          "description": "Compile using a local solc binary file, please include the path of the file if wanted: 'C://v0.4.3+commit.2353da71.js'"
+        },
+        "solidity.linter": {
+          "type": [
+            "boolean",
+            "string"
+          ],
+          "default": "solium",
+          "description": "Enables solhint linting. Possible options 'solhint' and 'solium'"
+        },
+        "solidity.solhintRules": {
+          "type": [
+            "object"
+          ],
+          "default": null,
+          "description": "Solhint linting validation rules"
+        },
+        "solidity.formatter": {
+          "type": "string",
+          "default": "prettier",
+          "enum": [
+            "none",
+            "prettier"
+          ],
+          "description": "Enables / disables the solidity formatter (prettier solidity default)"
+        },
+        "solidity.enabledSolium": {
+          "type": [
+            "boolean"
+          ],
+          "default": false,
+          "description": "Enables solium linting. DEPRECATED: Use \"linter\" instead"
+        },
+        "solidity.soliumRules": {
+          "type": [
+            "object"
+          ],
+          "default": {
+            "imports-on-top": 0,
+            "variable-declarations": 0,
+            "indentation": [
+              "off",
+              4
+            ],
+            "quotes": [
+              "off",
+              "double"
+            ]
+          },
+          "description": "Solium linting validation rules"
+        },
+        "solidity.enabledAsYouTypeCompilationErrorCheck": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enables as you type compilation of the document and error highlighting"
+        },
+        "solidity.validationDelay": {
+          "type": "number",
+          "default": 1500,
+          "description": "Delay to trigger the validation of the changes of the current document (compilation, solium)"
+        },
+        "solidity.packageDefaultDependenciesDirectory": {
+          "type": "string",
+          "default": "node_modules",
+          "description": "Default directory for Packages Dependencies, i.e: 'node_modules', 'lib'. This is used to avoid typing imports with that path prefix"
+        },
+        "solidity.packageDefaultDependenciesContractsDirectory": {
+          "type": "string",
+          "default": "contracts",
+          "description": "Default directory where the Package Dependency store its contracts, i.e: 'src', 'contracts', or just a blank string '', this is used to avoid typing imports with subfolder paths"
+        }
+      }
+    },
+    "languages": [
+      {
+        "id": "solidity",
+        "aliases": [
+          "Solidity",
+          "solidity"
+        ],
+        "extensions": [
+          ".sol"
+        ],
+        "configuration": "./solidity.configuration.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "solidity.compile.active",
+        "title": "Solidity: Compile Contract"
+      },
+      {
+        "command": "solidity.compile",
+        "title": "Solidity: Compile All"
+      },
+      {
+        "command": "solidity.compilerInfo",
+        "title": "Solidity: Compiler Information"
+      },
+      {
+        "command": "solidity.solcReleases",
+        "title": "Solidity: Get solidity releases"
+      },
+      {
+        "command": "solidity.codegenNethereumCodeGenSettings",
+        "title": "Solidity: Create 'nethereum-gen.settings' with default values at root"
+      },
+      {
+        "command": "solidity.codegenCSharpProject",
+        "title": "Solidity: Code generate CSharp contract definition"
+      },
+      {
+        "command": "solidity.compileAndCodegenCSharpProject",
+        "title": "Solidity: Compile and Code generate CSharp contract definition"
+      },
+      {
+        "command": "solidity.codegenVbNetProject",
+        "title": "Solidity: Code generate VB.Net contract definition"
+      },
+      {
+        "command": "solidity.compileAndCodegenVbNetProject",
+        "title": "Solidity: Compile and Code generate VB.Net contract definition"
+      },
+      {
+        "command": "solidity.codegenFSharpProject",
+        "title": "Solidity: Code generate FSharp contract definition"
+      },
+      {
+        "command": "solidity.compileAndCodegenFSharpProject",
+        "title": "Solidity: Compile and Code generate FSharp contract definition"
+      },
+      {
+        "command": "solidity.codegenCSharpProjectAll",
+        "title": "Solidity: Code generate CSharp Project from all compiled files"
+      },
+      {
+        "command": "solidity.codegenVbNetProjectAll",
+        "title": "Solidity: Code generate VB.Net Project from all compiled files"
+      },
+      {
+        "command": "solidity.codegenFSharpProjectAll",
+        "title": "Solidity: Code generate FSharp Project from all compiled files"
+      },
+      {
+        "command": "solidity.codegenCSharpProjectAllAbiCurrent",
+        "title": "Solidity: Code generate CSharp Definitions for Abi files in current folder"
+      },
+      {
+        "command": "solidity.codegenVbNetProjectAllAbiCurrent",
+        "title": "Solidity: Code generate VB.Net Definitions for Abi files in current folder"
+      },
+      {
+        "command": "solidity.codegenFSharpProjectAllAbiCurrent",
+        "title": "Solidity: Code generate FSharp Definitions for Abi files in current folder"
+      },
+      {
+        "command": "solidity.fixDocument",
+        "title": "Solidity: Fix document rules using Solium"
+      },
+      {
+        "command": "solidity.selectWorkspaceRemoteSolcVersion",
+        "title": "Solidity: Change workspace compiler version (Remote)"
+      },
+      {
+        "command": "solidity.selectGlobalRemoteSolcVersion",
+        "title": "Solidity: Change global compiler version (Remote)"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "when": "resourceExtname == .abi || resourceExtname == .json",
+          "command": "solidity.codegenCSharpProject"
+        },
+        {
+          "when": "resourceExtname == .abi || resourceExtname == .json",
+          "command": "solidity.codegenVbNetProject"
+        },
+        {
+          "when": "resourceExtname == .abi || resourceExtname == .json",
+          "command": "solidity.codegenFSharpProject"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile.active"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile"
+        }
+      ],
+      "editor/context": [
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile.active",
+          "group": "1_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile",
+          "group": "1_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compilerInfo",
+          "group": "1_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.solcReleases",
+          "group": "2_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.selectGlobalRemoteSolcVersion",
+          "group": "2_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.selectWorkspaceRemoteSolcVersion",
+          "group": "2_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.codegenNethereumCodeGenSettings",
+          "group": "3_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compileAndCodegenCSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compileAndCodegenVbNetProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compileAndCodegenFSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenCSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenVbNetProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenFSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenCSharpProjectAllAbiCurrent",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenVbNetProjectAllAbiCurrent",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenFSharpProjectAllAbiCurrent",
+          "group": "3_solidity"
+        }
+      ],
+      "explorer/context": [
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenCSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenVbNetProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenFSharpProject",
+          "group": "3_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile.active",
+          "group": "2_solidity"
+        },
+        {
+          "when": "editorLangId == 'solidity'",
+          "command": "solidity.compile",
+          "group": "2_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenCSharpProjectAllAbiCurrent",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenVbNetProjectAllAbiCurrent",
+          "group": "3_solidity"
+        },
+        {
+          "when": "resourceExtname == .abi",
+          "command": "solidity.codegenFSharpProjectAllAbiCurrent",
+          "group": "3_solidity"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "solidity.compile.active",
+        "key": "f5",
+        "mac": "f5",
+        "when": "editorTextFocus && editorLangId == 'solidity'"
+      },
+      {
+        "command": "solidity.compile",
+        "key": "Ctrl+f5",
+        "mac": "Cmd+f5",
+        "when": "editorTextFocus && editorLangId == 'solidity'"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "solidity",
+        "path": "./snippets/solidity.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "solidity",
+        "scopeName": "source.solidity",
+        "path": "./syntaxes/solidity.json"
+      }
+    ]
+  }
+}
