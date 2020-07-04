@@ -2,6 +2,7 @@
 ### Work in progress!!
 
 > fork from [vscode-solidity](https://github.com/juanfranblanco/vscode-solidity) at [this commit](https://github.com/juanfranblanco/vscode-solidity/commit/2b87c8f3b794febc52eede4acd09642c2726e792)
+
 Port of Juan Blanco's Solidity plugin for VSCode to vim8/neovim, based on [coc.nvim](https://github.com/neoclide/coc.nvim).
 
 ### Porting strategy
