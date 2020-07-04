@@ -112,9 +112,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const coc = __importStar(__webpack_require__(1));
-const compiler_1 = __webpack_require__(95);
-const compileActive_1 = __webpack_require__(96);
-const logger = __webpack_require__(2)('workspace');
+const compiler_1 = __webpack_require__(2);
+const compileActive_1 = __webpack_require__(3);
+const logger = __webpack_require__(5)('workspace');
 let diagnosticCollection;
 let compiler;
 async function activate(context) {
@@ -273,12 +273,142 @@ module.exports = require("coc.nvim");
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = __webpack_require__(3);
-const fs_1 = tslib_1.__importDefault(__webpack_require__(4));
-const log4js_1 = tslib_1.__importDefault(__webpack_require__(5));
-const path_1 = tslib_1.__importDefault(__webpack_require__(20));
-const os_1 = tslib_1.__importDefault(__webpack_require__(14));
+exports.Compiler = void 0;
+const coc = __importStar(__webpack_require__(1));
+class Compiler {
+    constructor(solcCachePath) {
+        this.solcCachePath = solcCachePath;
+        this.outputChannel = coc.workspace.createOutputChannel('solidity compilation');
+    }
+}
+exports.Compiler = Compiler;
+
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.compileActiveContract = exports.initDiagnosticCollection = void 0;
+const coc = __importStar(__webpack_require__(1));
+const contractsCollection_1 = __webpack_require__(4);
+const vscode_uri_1 = __webpack_require__(98);
+const logger = __webpack_require__(5)('workspace');
+let diagnosticCollection;
+function initDiagnosticCollection(diagnostics) {
+    diagnosticCollection = diagnostics;
+}
+exports.initDiagnosticCollection = initDiagnosticCollection;
+async function compileActiveContract(compiler) {
+    const editor = await coc.workspace.document;
+    if (!editor) {
+        return null; // We need something open
+    }
+    if (editor.filetype != 'solidity') {
+        coc.workspace.showMessage('WARNING: This not a solidity file (*.sol)');
+        return null;
+    }
+    // // Check if is folder, if not stop we need to output to a bin folder on rootPath
+    if (coc.workspace.workspaceFolders[0] == undefined) {
+        coc.workspace.showMessage('Please open a folder in Vim as a workspace');
+        return null;
+    }
+    const contractsCollection = new contractsCollection_1.ContractCollection();
+    const contractCode = editor.content;
+    const contractUri = vscode_uri_1.URI.parse(editor.uri);
+    const contractPath = contractUri.fsPath;
+    // const packageDefaultDependenciesDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesDirectory');
+    // const packageDefaultDependenciesContractsDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesContractsDirectory');
+    // const compilationOptimisation = vscode.workspace.getConfiguration('solidity').get<number>('compilerOptimization');
+    // const project = initialiseProject(vscode.workspace.workspaceFolders[0].uri.fsPath, packageDefaultDependenciesDirectory, packageDefaultDependenciesContractsDirectory);
+    // const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
+    // const packagesPath = formatPath(project.packagesDir);
+    // TODO: Remove when porting continues.
+    coc.workspace.showMessage('Porting compileActiveContract()...');
+    // return compiler.compile(contractsCollection.getDefaultContractsForCompilation(compilationOptimisation),
+    //         diagnosticCollection,
+    //         project.projectPackage.build_dir,
+    //         project.projectPackage.absoluletPath,
+    //         null,
+    //         packagesPath,
+    //         contract.absolutePath);
+    // TODO: Remove after returning something real.
+    return new Promise(res => { res([]); });
+}
+exports.compileActiveContract = compileActiveContract;
+
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ContractCollection = void 0;
+// import {Project} from './project';
+// import {formatPath} from '../util';
+class ContractCollection {
+    constructor() {
+        this.contracts = new Array();
+    }
+}
+exports.ContractCollection = ContractCollection;
+
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = __webpack_require__(6);
+const fs_1 = tslib_1.__importDefault(__webpack_require__(7));
+const log4js_1 = tslib_1.__importDefault(__webpack_require__(8));
+const path_1 = tslib_1.__importDefault(__webpack_require__(23));
+const os_1 = tslib_1.__importDefault(__webpack_require__(17));
 function getLogFile() {
     let file = process.env.NVIM_COC_LOG_FILE;
     if (file)
@@ -335,7 +465,7 @@ module.exports = (name = 'coc-nvim') => {
 //# sourceMappingURL=logger.js.map
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -584,13 +714,13 @@ function __classPrivateFieldSet(receiver, privateMap, value) {
 
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, exports) {
 
 module.exports = require("fs");
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -613,17 +743,17 @@ module.exports = require("fs");
  * @since 2005-05-20
  * Website: http://log4js.berlios.de
  */
-const debug = __webpack_require__(6)("log4js:main");
-const fs = __webpack_require__(4);
-const deepClone = __webpack_require__(16)({ proto: true });
-const configuration = __webpack_require__(17);
-const layouts = __webpack_require__(18);
-const levels = __webpack_require__(21);
-const appenders = __webpack_require__(22);
-const categories = __webpack_require__(92);
-const Logger = __webpack_require__(93);
-const clustering = __webpack_require__(23);
-const connectLogger = __webpack_require__(94);
+const debug = __webpack_require__(9)("log4js:main");
+const fs = __webpack_require__(7);
+const deepClone = __webpack_require__(19)({ proto: true });
+const configuration = __webpack_require__(20);
+const layouts = __webpack_require__(21);
+const levels = __webpack_require__(24);
+const appenders = __webpack_require__(25);
+const categories = __webpack_require__(95);
+const Logger = __webpack_require__(96);
+const clustering = __webpack_require__(26);
+const connectLogger = __webpack_require__(97);
 
 let enabled = false;
 
@@ -750,7 +880,7 @@ module.exports = log4js;
 
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -759,14 +889,14 @@ module.exports = log4js;
  */
 
 if (typeof process === 'undefined' || process.type === 'renderer' || process.browser === true || process.__nwjs) {
-	module.exports = __webpack_require__(7);
-} else {
 	module.exports = __webpack_require__(10);
+} else {
+	module.exports = __webpack_require__(13);
 }
 
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-env browser */
@@ -1018,7 +1148,7 @@ function localstorage() {
 	}
 }
 
-module.exports = __webpack_require__(8)(exports);
+module.exports = __webpack_require__(11)(exports);
 
 const {formatters} = module.exports;
 
@@ -1036,7 +1166,7 @@ formatters.j = function (v) {
 
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -1052,7 +1182,7 @@ function setup(env) {
 	createDebug.disable = disable;
 	createDebug.enable = enable;
 	createDebug.enabled = enabled;
-	createDebug.humanize = __webpack_require__(9);
+	createDebug.humanize = __webpack_require__(12);
 
 	Object.keys(env).forEach(key => {
 		createDebug[key] = env[key];
@@ -1308,7 +1438,7 @@ module.exports = setup;
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /**
@@ -1476,15 +1606,15 @@ function plural(ms, msAbs, n, name) {
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
 
-const tty = __webpack_require__(11);
-const util = __webpack_require__(12);
+const tty = __webpack_require__(14);
+const util = __webpack_require__(15);
 
 /**
  * This is the Node.js implementation of `debug()`.
@@ -1506,7 +1636,7 @@ exports.colors = [6, 2, 3, 4, 5, 1];
 try {
 	// Optional dependency (as in, doesn't need to be installed, NOT like optionalDependencies in package.json)
 	// eslint-disable-next-line import/no-extraneous-dependencies
-	const supportsColor = __webpack_require__(13);
+	const supportsColor = __webpack_require__(16);
 
 	if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
 		exports.colors = [
@@ -1714,7 +1844,7 @@ function init(debug) {
 	}
 }
 
-module.exports = __webpack_require__(8)(exports);
+module.exports = __webpack_require__(11)(exports);
 
 const {formatters} = module.exports;
 
@@ -1739,25 +1869,25 @@ formatters.O = function (v) {
 
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports) {
 
 module.exports = require("tty");
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("util");
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const os = __webpack_require__(14);
-const hasFlag = __webpack_require__(15);
+const os = __webpack_require__(17);
+const hasFlag = __webpack_require__(18);
 
 const {env} = process;
 
@@ -1896,13 +2026,13 @@ module.exports = {
 
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports) {
 
 module.exports = require("os");
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1917,7 +2047,7 @@ module.exports = (flag, argv) => {
 
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2071,13 +2201,13 @@ function rfdcCircles (opts) {
 
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 
-const util = __webpack_require__(12);
-const debug = __webpack_require__(6)('log4js:configuration');
+const util = __webpack_require__(15);
+const debug = __webpack_require__(9)('log4js:configuration');
 
 const preProcessingListeners = [];
 const listeners = [];
@@ -2136,13 +2266,13 @@ module.exports = {
 
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const dateFormat = __webpack_require__(19);
-const os = __webpack_require__(14);
-const util = __webpack_require__(12);
-const path = __webpack_require__(20);
+const dateFormat = __webpack_require__(22);
+const os = __webpack_require__(17);
+const util = __webpack_require__(15);
+const path = __webpack_require__(23);
 
 const styles = {
   // styles
@@ -2516,7 +2646,7 @@ module.exports = {
 
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2718,18 +2848,18 @@ module.exports.ABSOLUTETIME_FORMAT = "hh:mm:ss.SSS";
 
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports) {
 
 module.exports = require("path");
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 
-const configuration = __webpack_require__(17);
+const configuration = __webpack_require__(20);
 
 const validColours = [
   'white', 'grey', 'black',
@@ -2880,34 +3010,34 @@ module.exports = Level;
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const path = __webpack_require__(20);
-const debug = __webpack_require__(6)('log4js:appenders');
-const configuration = __webpack_require__(17);
-const clustering = __webpack_require__(23);
-const levels = __webpack_require__(21);
-const layouts = __webpack_require__(18);
-const adapters = __webpack_require__(27);
+const path = __webpack_require__(23);
+const debug = __webpack_require__(9)('log4js:appenders');
+const configuration = __webpack_require__(20);
+const clustering = __webpack_require__(26);
+const levels = __webpack_require__(24);
+const layouts = __webpack_require__(21);
+const adapters = __webpack_require__(30);
 
 // pre-load the core appenders so that webpack can find them
 const coreAppenders = new Map();
-coreAppenders.set('console', __webpack_require__(28));
-coreAppenders.set('stdout', __webpack_require__(29));
-coreAppenders.set('stderr', __webpack_require__(30));
-coreAppenders.set('logLevelFilter', __webpack_require__(31));
-coreAppenders.set('categoryFilter', __webpack_require__(32));
-coreAppenders.set('noLogFilter', __webpack_require__(33));
-coreAppenders.set('file', __webpack_require__(34));
-coreAppenders.set('dateFile', __webpack_require__(90));
+coreAppenders.set('console', __webpack_require__(31));
+coreAppenders.set('stdout', __webpack_require__(32));
+coreAppenders.set('stderr', __webpack_require__(33));
+coreAppenders.set('logLevelFilter', __webpack_require__(34));
+coreAppenders.set('categoryFilter', __webpack_require__(35));
+coreAppenders.set('noLogFilter', __webpack_require__(36));
+coreAppenders.set('file', __webpack_require__(37));
+coreAppenders.set('dateFile', __webpack_require__(93));
 
 const appenders = new Map();
 
 const tryLoading = (modulePath, config) => {
   debug('Loading module from ', modulePath);
   try {
-    return __webpack_require__(91)(modulePath); //eslint-disable-line
+    return __webpack_require__(94)(modulePath); //eslint-disable-line
   } catch (e) {
     // if the module was found, and we still got an error, then raise it
     configuration.throwExceptionIf(
@@ -2942,7 +3072,7 @@ const createAppender = (name, config) => {
   }
 
   debug(`${name}: clustering.isMaster ? ${clustering.isMaster()}`);
-  debug(`${name}: appenderModule is ${__webpack_require__(12).inspect(appenderModule)}`); // eslint-disable-line
+  debug(`${name}: appenderModule is ${__webpack_require__(15).inspect(appenderModule)}`); // eslint-disable-line
   return clustering.onlyOnMaster(() => {
     debug(`calling appenderModule.configure for ${name} / ${appenderConfig.type}`);
     return appenderModule.configure(
@@ -2993,17 +3123,17 @@ module.exports = appenders;
 
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(6)("log4js:clustering");
-const LoggingEvent = __webpack_require__(24);
-const configuration = __webpack_require__(17);
+const debug = __webpack_require__(9)("log4js:clustering");
+const LoggingEvent = __webpack_require__(27);
+const configuration = __webpack_require__(20);
 
 let disabled = false;
 let cluster = null;
 try {
-  cluster = __webpack_require__(26); //eslint-disable-line
+  cluster = __webpack_require__(29); //eslint-disable-line
 } catch (e) {
   debug("cluster module not present");
   disabled = true;
@@ -3102,11 +3232,11 @@ module.exports = {
 
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const flatted = __webpack_require__(25);
-const levels = __webpack_require__(21);
+const flatted = __webpack_require__(28);
+const levels = __webpack_require__(24);
 
 /**
  * @name LoggingEvent
@@ -3188,7 +3318,7 @@ module.exports = LoggingEvent;
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3314,13 +3444,13 @@ var stringify = Flatted.stringify;
 
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("cluster");
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports) {
 
 function maxFileSizeUnitTransform(maxLogSize) {
@@ -3370,7 +3500,7 @@ module.exports.modifyConfig = config => (adapters[config.type] ? adapters[config
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports) {
 
 // eslint-disable-next-line no-console
@@ -3394,7 +3524,7 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports) {
 
 
@@ -3417,7 +3547,7 @@ exports.configure = configure;
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports) {
 
 
@@ -3440,7 +3570,7 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports) {
 
 function logLevelFilter(minLevelString, maxLevelString, appender, levels) {
@@ -3463,10 +3593,10 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(6)('log4js:categoryFilter');
+const debug = __webpack_require__(9)('log4js:categoryFilter');
 
 function categoryFilter(excludes, appender) {
   if (typeof excludes === 'string') excludes = [excludes];
@@ -3488,12 +3618,12 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
 
-const debug = __webpack_require__(6)('log4js:noLogFilter');
+const debug = __webpack_require__(9)('log4js:noLogFilter');
 
 /**
  * The function removes empty or null regexp from the array
@@ -3537,13 +3667,13 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(6)('log4js:file');
-const path = __webpack_require__(20);
-const streams = __webpack_require__(35);
-const os = __webpack_require__(14);
+const debug = __webpack_require__(9)('log4js:file');
+const path = __webpack_require__(23);
+const streams = __webpack_require__(38);
+const os = __webpack_require__(17);
 
 const eol = os.EOL || '\n';
 
@@ -3637,29 +3767,29 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  RollingFileWriteStream: __webpack_require__(36),
-  RollingFileStream: __webpack_require__(88),
-  DateRollingFileStream: __webpack_require__(89)
+  RollingFileWriteStream: __webpack_require__(39),
+  RollingFileStream: __webpack_require__(91),
+  DateRollingFileStream: __webpack_require__(92)
 };
 
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(37)("streamroller:RollingFileWriteStream");
-const fs = __webpack_require__(42);
-const path = __webpack_require__(20);
-const newNow = __webpack_require__(83);
-const format = __webpack_require__(19);
-const { Writable } = __webpack_require__(49);
-const fileNameFormatter = __webpack_require__(84);
-const fileNameParser = __webpack_require__(85);
-const moveAndMaybeCompressFile = __webpack_require__(86);
+const debug = __webpack_require__(40)("streamroller:RollingFileWriteStream");
+const fs = __webpack_require__(45);
+const path = __webpack_require__(23);
+const newNow = __webpack_require__(86);
+const format = __webpack_require__(22);
+const { Writable } = __webpack_require__(52);
+const fileNameFormatter = __webpack_require__(87);
+const fileNameParser = __webpack_require__(88);
+const moveAndMaybeCompressFile = __webpack_require__(89);
 
 /**
  * RollingFileWriteStream is mainly used when writing to a file rolling by date or size.
@@ -3921,7 +4051,7 @@ module.exports = RollingFileWriteStream;
 
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
@@ -3930,14 +4060,14 @@ module.exports = RollingFileWriteStream;
  */
 
 if (typeof process === 'undefined' || process.type === 'renderer' || process.browser === true || process.__nwjs) {
-	module.exports = __webpack_require__(38);
-} else {
 	module.exports = __webpack_require__(41);
+} else {
+	module.exports = __webpack_require__(44);
 }
 
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-env browser */
@@ -4189,7 +4319,7 @@ function localstorage() {
 	}
 }
 
-module.exports = __webpack_require__(39)(exports);
+module.exports = __webpack_require__(42)(exports);
 
 const {formatters} = module.exports;
 
@@ -4207,7 +4337,7 @@ formatters.j = function (v) {
 
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -4223,7 +4353,7 @@ function setup(env) {
 	createDebug.disable = disable;
 	createDebug.enable = enable;
 	createDebug.enabled = enabled;
-	createDebug.humanize = __webpack_require__(40);
+	createDebug.humanize = __webpack_require__(43);
 
 	Object.keys(env).forEach(key => {
 		createDebug[key] = env[key];
@@ -4479,7 +4609,7 @@ module.exports = setup;
 
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports) {
 
 /**
@@ -4647,15 +4777,15 @@ function plural(ms, msAbs, n, name) {
 
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /**
  * Module dependencies.
  */
 
-const tty = __webpack_require__(11);
-const util = __webpack_require__(12);
+const tty = __webpack_require__(14);
+const util = __webpack_require__(15);
 
 /**
  * This is the Node.js implementation of `debug()`.
@@ -4677,7 +4807,7 @@ exports.colors = [6, 2, 3, 4, 5, 1];
 try {
 	// Optional dependency (as in, doesn't need to be installed, NOT like optionalDependencies in package.json)
 	// eslint-disable-next-line import/no-extraneous-dependencies
-	const supportsColor = __webpack_require__(13);
+	const supportsColor = __webpack_require__(16);
 
 	if (supportsColor && (supportsColor.stderr || supportsColor).level >= 2) {
 		exports.colors = [
@@ -4885,7 +5015,7 @@ function init(debug) {
 	}
 }
 
-module.exports = __webpack_require__(39)(exports);
+module.exports = __webpack_require__(42)(exports);
 
 const {formatters} = module.exports;
 
@@ -4910,7 +5040,7 @@ formatters.O = function (v) {
 
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4919,24 +5049,24 @@ formatters.O = function (v) {
 module.exports = Object.assign(
   {},
   // Export promiseified graceful-fs:
-  __webpack_require__(43),
+  __webpack_require__(46),
   // Export extra methods:
-  __webpack_require__(52),
-  __webpack_require__(61),
+  __webpack_require__(55),
   __webpack_require__(64),
   __webpack_require__(67),
-  __webpack_require__(73),
-  __webpack_require__(54),
-  __webpack_require__(78),
-  __webpack_require__(80),
-  __webpack_require__(82),
-  __webpack_require__(63),
-  __webpack_require__(65)
+  __webpack_require__(70),
+  __webpack_require__(76),
+  __webpack_require__(57),
+  __webpack_require__(81),
+  __webpack_require__(83),
+  __webpack_require__(85),
+  __webpack_require__(66),
+  __webpack_require__(68)
 )
 
 // Export fs.promises as a getter property so that we don't trigger
 // ExperimentalWarning before fs.promises is actually accessed.
-const fs = __webpack_require__(4)
+const fs = __webpack_require__(7)
 if (Object.getOwnPropertyDescriptor(fs, 'promises')) {
   Object.defineProperty(module.exports, 'promises', {
     get () { return fs.promises }
@@ -4945,15 +5075,15 @@ if (Object.getOwnPropertyDescriptor(fs, 'promises')) {
 
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 // This is adapted from https://github.com/normalize/mz
 // Copyright (c) 2014-2016 Jonathan Ong me@jongleberry.com and Contributors
-const u = __webpack_require__(44).fromCallback
-const fs = __webpack_require__(45)
+const u = __webpack_require__(47).fromCallback
+const fs = __webpack_require__(48)
 
 const api = [
   'access',
@@ -5061,7 +5191,7 @@ if (typeof fs.realpath.native === 'function') {
 
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5093,15 +5223,15 @@ exports.fromPromise = function (fn) {
 
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var fs = __webpack_require__(4)
-var polyfills = __webpack_require__(46)
-var legacy = __webpack_require__(48)
-var clone = __webpack_require__(50)
+var fs = __webpack_require__(7)
+var polyfills = __webpack_require__(49)
+var legacy = __webpack_require__(51)
+var clone = __webpack_require__(53)
 
-var util = __webpack_require__(12)
+var util = __webpack_require__(15)
 
 /* istanbul ignore next - node 0.x polyfill */
 var gracefulQueue
@@ -5182,7 +5312,7 @@ if (!fs[gracefulQueue]) {
   if (/\bgfs4\b/i.test(process.env.NODE_DEBUG || '')) {
     process.on('exit', function() {
       debug(fs[gracefulQueue])
-      __webpack_require__(51).equal(fs[gracefulQueue].length, 0)
+      __webpack_require__(54).equal(fs[gracefulQueue].length, 0)
     })
   }
 }
@@ -5453,10 +5583,10 @@ function retry () {
 
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var constants = __webpack_require__(47)
+var constants = __webpack_require__(50)
 
 var origCwd = process.cwd
 var cwd = null
@@ -5801,16 +5931,16 @@ function patch (fs) {
 
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports) {
 
 module.exports = require("constants");
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Stream = __webpack_require__(49).Stream
+var Stream = __webpack_require__(52).Stream
 
 module.exports = legacy
 
@@ -5931,13 +6061,13 @@ function legacy (fs) {
 
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports) {
 
 module.exports = require("stream");
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5963,35 +6093,35 @@ function clone (obj) {
 
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports) {
 
 module.exports = require("assert");
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 module.exports = {
-  copySync: __webpack_require__(53)
+  copySync: __webpack_require__(56)
 }
 
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const mkdirpSync = __webpack_require__(54).mkdirsSync
-const utimesSync = __webpack_require__(58).utimesMillisSync
-const stat = __webpack_require__(59)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const mkdirpSync = __webpack_require__(57).mkdirsSync
+const utimesSync = __webpack_require__(61).utimesMillisSync
+const stat = __webpack_require__(62)
 
 function copySync (src, dest, opts) {
   if (typeof opts === 'function') {
@@ -6064,7 +6194,7 @@ function copyFile (srcStat, src, dest, opts) {
 
 function copyFileFallback (srcStat, src, dest, opts) {
   const BUF_LENGTH = 64 * 1024
-  const _buff = __webpack_require__(60)(BUF_LENGTH)
+  const _buff = __webpack_require__(63)(BUF_LENGTH)
 
   const fdr = fs.openSync(src, 'r')
   const fdw = fs.openSync(dest, 'w', srcStat.mode)
@@ -6152,14 +6282,14 @@ module.exports = copySync
 
 
 /***/ }),
-/* 54 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const u = __webpack_require__(44).fromCallback
-const mkdirs = u(__webpack_require__(55))
-const mkdirsSync = __webpack_require__(57)
+const u = __webpack_require__(47).fromCallback
+const mkdirs = u(__webpack_require__(58))
+const mkdirsSync = __webpack_require__(60)
 
 module.exports = {
   mkdirs,
@@ -6173,15 +6303,15 @@ module.exports = {
 
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const invalidWin32Path = __webpack_require__(56).invalidWin32Path
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const invalidWin32Path = __webpack_require__(59).invalidWin32Path
 
 const o777 = parseInt('0777', 8)
 
@@ -6243,13 +6373,13 @@ module.exports = mkdirs
 
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const path = __webpack_require__(20)
+const path = __webpack_require__(23)
 
 // get drive on windows
 function getRootPath (p) {
@@ -6275,15 +6405,15 @@ module.exports = {
 
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const invalidWin32Path = __webpack_require__(56).invalidWin32Path
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const invalidWin32Path = __webpack_require__(59).invalidWin32Path
 
 const o777 = parseInt('0777', 8)
 
@@ -6336,15 +6466,15 @@ module.exports = mkdirsSync
 
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const os = __webpack_require__(14)
-const path = __webpack_require__(20)
+const fs = __webpack_require__(48)
+const os = __webpack_require__(17)
+const path = __webpack_require__(23)
 
 // HFS, ext{2,3}, FAT do not, Node.js v0.10 does not
 function hasMillisResSync () {
@@ -6422,14 +6552,14 @@ module.exports = {
 
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
 
 const NODE_VERSION_MAJOR_WITH_BIGINT = 10
 const NODE_VERSION_MINOR_WITH_BIGINT = 5
@@ -6601,7 +6731,7 @@ module.exports = {
 
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6620,31 +6750,31 @@ module.exports = function (size) {
 
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
+const u = __webpack_require__(47).fromCallback
 module.exports = {
-  copy: u(__webpack_require__(62))
+  copy: u(__webpack_require__(65))
 }
 
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const mkdirp = __webpack_require__(54).mkdirs
-const pathExists = __webpack_require__(63).pathExists
-const utimes = __webpack_require__(58).utimesMillis
-const stat = __webpack_require__(59)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const mkdirp = __webpack_require__(57).mkdirs
+const pathExists = __webpack_require__(66).pathExists
+const utimes = __webpack_require__(61).utimesMillis
+const stat = __webpack_require__(62)
 
 function copy (src, dest, opts, cb) {
   if (typeof opts === 'function' && !cb) {
@@ -6852,13 +6982,13 @@ module.exports = copy
 
 
 /***/ }),
-/* 63 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
-const u = __webpack_require__(44).fromPromise
-const fs = __webpack_require__(43)
+const u = __webpack_require__(47).fromPromise
+const fs = __webpack_require__(46)
 
 function pathExists (path) {
   return fs.access(path).then(() => true).catch(() => false)
@@ -6871,17 +7001,17 @@ module.exports = {
 
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const mkdir = __webpack_require__(54)
-const remove = __webpack_require__(65)
+const u = __webpack_require__(47).fromCallback
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const mkdir = __webpack_require__(57)
+const remove = __webpack_require__(68)
 
 const emptyDir = u(function emptyDir (dir, callback) {
   callback = callback || function () {}
@@ -6926,14 +7056,14 @@ module.exports = {
 
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const rimraf = __webpack_require__(66)
+const u = __webpack_require__(47).fromCallback
+const rimraf = __webpack_require__(69)
 
 module.exports = {
   remove: u(rimraf),
@@ -6942,15 +7072,15 @@ module.exports = {
 
 
 /***/ }),
-/* 66 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const assert = __webpack_require__(51)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const assert = __webpack_require__(54)
 
 const isWindows = (process.platform === 'win32')
 
@@ -7263,15 +7393,15 @@ rimraf.sync = rimrafSync
 
 
 /***/ }),
-/* 67 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const file = __webpack_require__(68)
-const link = __webpack_require__(69)
-const symlink = __webpack_require__(70)
+const file = __webpack_require__(71)
+const link = __webpack_require__(72)
+const symlink = __webpack_require__(73)
 
 module.exports = {
   // file
@@ -7293,17 +7423,17 @@ module.exports = {
 
 
 /***/ }),
-/* 68 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const path = __webpack_require__(20)
-const fs = __webpack_require__(45)
-const mkdir = __webpack_require__(54)
-const pathExists = __webpack_require__(63).pathExists
+const u = __webpack_require__(47).fromCallback
+const path = __webpack_require__(23)
+const fs = __webpack_require__(48)
+const mkdir = __webpack_require__(57)
+const pathExists = __webpack_require__(66).pathExists
 
 function createFile (file, callback) {
   function makeFile () {
@@ -7349,17 +7479,17 @@ module.exports = {
 
 
 /***/ }),
-/* 69 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const path = __webpack_require__(20)
-const fs = __webpack_require__(45)
-const mkdir = __webpack_require__(54)
-const pathExists = __webpack_require__(63).pathExists
+const u = __webpack_require__(47).fromCallback
+const path = __webpack_require__(23)
+const fs = __webpack_require__(48)
+const mkdir = __webpack_require__(57)
+const pathExists = __webpack_require__(66).pathExists
 
 function createLink (srcpath, dstpath, callback) {
   function makeLink (srcpath, dstpath) {
@@ -7417,28 +7547,28 @@ module.exports = {
 
 
 /***/ }),
-/* 70 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const path = __webpack_require__(20)
-const fs = __webpack_require__(45)
-const _mkdirs = __webpack_require__(54)
+const u = __webpack_require__(47).fromCallback
+const path = __webpack_require__(23)
+const fs = __webpack_require__(48)
+const _mkdirs = __webpack_require__(57)
 const mkdirs = _mkdirs.mkdirs
 const mkdirsSync = _mkdirs.mkdirsSync
 
-const _symlinkPaths = __webpack_require__(71)
+const _symlinkPaths = __webpack_require__(74)
 const symlinkPaths = _symlinkPaths.symlinkPaths
 const symlinkPathsSync = _symlinkPaths.symlinkPathsSync
 
-const _symlinkType = __webpack_require__(72)
+const _symlinkType = __webpack_require__(75)
 const symlinkType = _symlinkType.symlinkType
 const symlinkTypeSync = _symlinkType.symlinkTypeSync
 
-const pathExists = __webpack_require__(63).pathExists
+const pathExists = __webpack_require__(66).pathExists
 
 function createSymlink (srcpath, dstpath, type, callback) {
   callback = (typeof type === 'function') ? type : callback
@@ -7487,15 +7617,15 @@ module.exports = {
 
 
 /***/ }),
-/* 71 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const path = __webpack_require__(20)
-const fs = __webpack_require__(45)
-const pathExists = __webpack_require__(63).pathExists
+const path = __webpack_require__(23)
+const fs = __webpack_require__(48)
+const pathExists = __webpack_require__(66).pathExists
 
 /**
  * Function that returns two types of paths, one relative to symlink, and one
@@ -7593,13 +7723,13 @@ module.exports = {
 
 
 /***/ }),
-/* 72 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
+const fs = __webpack_require__(48)
 
 function symlinkType (srcpath, type, callback) {
   callback = (typeof type === 'function') ? type : callback
@@ -7631,17 +7761,17 @@ module.exports = {
 
 
 /***/ }),
-/* 73 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const jsonFile = __webpack_require__(74)
+const u = __webpack_require__(47).fromCallback
+const jsonFile = __webpack_require__(77)
 
-jsonFile.outputJson = u(__webpack_require__(76))
-jsonFile.outputJsonSync = __webpack_require__(77)
+jsonFile.outputJson = u(__webpack_require__(79))
+jsonFile.outputJsonSync = __webpack_require__(80)
 // aliases
 jsonFile.outputJSON = jsonFile.outputJson
 jsonFile.outputJSONSync = jsonFile.outputJsonSync
@@ -7654,14 +7784,14 @@ module.exports = jsonFile
 
 
 /***/ }),
-/* 74 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const jsonFile = __webpack_require__(75)
+const u = __webpack_require__(47).fromCallback
+const jsonFile = __webpack_require__(78)
 
 module.exports = {
   // jsonfile exports
@@ -7673,14 +7803,14 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var _fs
 try {
-  _fs = __webpack_require__(45)
+  _fs = __webpack_require__(48)
 } catch (_) {
-  _fs = __webpack_require__(4)
+  _fs = __webpack_require__(7)
 }
 
 function readFile (file, options, callback) {
@@ -7813,16 +7943,16 @@ module.exports = jsonfile
 
 
 /***/ }),
-/* 76 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const path = __webpack_require__(20)
-const mkdir = __webpack_require__(54)
-const pathExists = __webpack_require__(63).pathExists
-const jsonFile = __webpack_require__(74)
+const path = __webpack_require__(23)
+const mkdir = __webpack_require__(57)
+const pathExists = __webpack_require__(66).pathExists
+const jsonFile = __webpack_require__(77)
 
 function outputJson (file, data, options, callback) {
   if (typeof options === 'function') {
@@ -7847,16 +7977,16 @@ module.exports = outputJson
 
 
 /***/ }),
-/* 77 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const mkdir = __webpack_require__(54)
-const jsonFile = __webpack_require__(74)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const mkdir = __webpack_require__(57)
+const jsonFile = __webpack_require__(77)
 
 function outputJsonSync (file, data, options) {
   const dir = path.dirname(file)
@@ -7872,30 +8002,30 @@ module.exports = outputJsonSync
 
 
 /***/ }),
-/* 78 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 module.exports = {
-  moveSync: __webpack_require__(79)
+  moveSync: __webpack_require__(82)
 }
 
 
 /***/ }),
-/* 79 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const copySync = __webpack_require__(52).copySync
-const removeSync = __webpack_require__(65).removeSync
-const mkdirpSync = __webpack_require__(54).mkdirpSync
-const stat = __webpack_require__(59)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const copySync = __webpack_require__(55).copySync
+const removeSync = __webpack_require__(68).removeSync
+const mkdirpSync = __webpack_require__(57).mkdirpSync
+const stat = __webpack_require__(62)
 
 function moveSync (src, dest, opts) {
   opts = opts || {}
@@ -7938,32 +8068,32 @@ module.exports = moveSync
 
 
 /***/ }),
-/* 80 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
+const u = __webpack_require__(47).fromCallback
 module.exports = {
-  move: u(__webpack_require__(81))
+  move: u(__webpack_require__(84))
 }
 
 
 /***/ }),
-/* 81 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const copy = __webpack_require__(61).copy
-const remove = __webpack_require__(65).remove
-const mkdirp = __webpack_require__(54).mkdirp
-const pathExists = __webpack_require__(63).pathExists
-const stat = __webpack_require__(59)
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const copy = __webpack_require__(64).copy
+const remove = __webpack_require__(68).remove
+const mkdirp = __webpack_require__(57).mkdirp
+const pathExists = __webpack_require__(66).pathExists
+const stat = __webpack_require__(62)
 
 function move (src, dest, opts, cb) {
   if (typeof opts === 'function') {
@@ -8023,17 +8153,17 @@ module.exports = move
 
 
 /***/ }),
-/* 82 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-const u = __webpack_require__(44).fromCallback
-const fs = __webpack_require__(45)
-const path = __webpack_require__(20)
-const mkdir = __webpack_require__(54)
-const pathExists = __webpack_require__(63).pathExists
+const u = __webpack_require__(47).fromCallback
+const fs = __webpack_require__(48)
+const path = __webpack_require__(23)
+const mkdir = __webpack_require__(57)
+const pathExists = __webpack_require__(66).pathExists
 
 function outputFile (file, data, encoding, callback) {
   if (typeof encoding === 'function') {
@@ -8070,7 +8200,7 @@ module.exports = {
 
 
 /***/ }),
-/* 83 */
+/* 86 */
 /***/ (function(module, exports) {
 
 // allows us to inject a mock date in tests
@@ -8078,11 +8208,11 @@ module.exports = () => new Date();
 
 
 /***/ }),
-/* 84 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(37)("streamroller:fileNameFormatter");
-const path = __webpack_require__(20);
+const debug = __webpack_require__(40)("streamroller:fileNameFormatter");
+const path = __webpack_require__(23);
 const FILENAME_SEP = ".";
 const ZIP_EXT = ".gz";
 
@@ -8121,13 +8251,13 @@ module.exports = ({
 
 
 /***/ }),
-/* 85 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(37)("streamroller:fileNameParser");
+const debug = __webpack_require__(40)("streamroller:fileNameParser");
 const FILENAME_SEP = ".";
 const ZIP_EXT = ".gz";
-const format = __webpack_require__(19);
+const format = __webpack_require__(22);
 
 module.exports = ({ file, keepFileExt, pattern }) => {
   // All these functions take two arguments: f, the filename, and p, the result placeholder
@@ -8222,12 +8352,12 @@ module.exports = ({ file, keepFileExt, pattern }) => {
 
 
 /***/ }),
-/* 86 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(37)('streamroller:moveAndMaybeCompressFile');
-const fs = __webpack_require__(42);
-const zlib = __webpack_require__(87);
+const debug = __webpack_require__(40)('streamroller:moveAndMaybeCompressFile');
+const fs = __webpack_require__(45);
+const zlib = __webpack_require__(90);
 
 const moveAndMaybeCompressFile = async (
   sourceFilePath,
@@ -8286,16 +8416,16 @@ module.exports = moveAndMaybeCompressFile;
 
 
 /***/ }),
-/* 87 */
+/* 90 */
 /***/ (function(module, exports) {
 
 module.exports = require("zlib");
 
 /***/ }),
-/* 88 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const RollingFileWriteStream = __webpack_require__(36);
+const RollingFileWriteStream = __webpack_require__(39);
 
 // just to adapt the previous version
 class RollingFileStream extends RollingFileWriteStream {
@@ -8325,10 +8455,10 @@ module.exports = RollingFileStream;
 
 
 /***/ }),
-/* 89 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const RollingFileWriteStream = __webpack_require__(36);
+const RollingFileWriteStream = __webpack_require__(39);
 
 // just to adapt the previous version
 class DateRollingFileStream extends RollingFileWriteStream {
@@ -8364,11 +8494,11 @@ module.exports = DateRollingFileStream;
 
 
 /***/ }),
-/* 90 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const streams = __webpack_require__(35);
-const os = __webpack_require__(14);
+const streams = __webpack_require__(38);
+const os = __webpack_require__(17);
 
 const eol = os.EOL || '\n';
 
@@ -8434,7 +8564,7 @@ module.exports.configure = configure;
 
 
 /***/ }),
-/* 91 */
+/* 94 */
 /***/ (function(module, exports) {
 
 function webpackEmptyContext(req) {
@@ -8445,16 +8575,16 @@ function webpackEmptyContext(req) {
 webpackEmptyContext.keys = function() { return []; };
 webpackEmptyContext.resolve = webpackEmptyContext;
 module.exports = webpackEmptyContext;
-webpackEmptyContext.id = 91;
+webpackEmptyContext.id = 94;
 
 /***/ }),
-/* 92 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const debug = __webpack_require__(6)('log4js:categories');
-const configuration = __webpack_require__(17);
-const levels = __webpack_require__(21);
-const appenders = __webpack_require__(22);
+const debug = __webpack_require__(9)('log4js:categories');
+const configuration = __webpack_require__(20);
+const levels = __webpack_require__(24);
+const appenders = __webpack_require__(25);
 
 const categories = new Map();
 
@@ -8662,16 +8792,16 @@ module.exports = {
 
 
 /***/ }),
-/* 93 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint no-underscore-dangle:0 */
-const debug = __webpack_require__(6)("log4js:logger");
-const LoggingEvent = __webpack_require__(24);
-const levels = __webpack_require__(21);
-const clustering = __webpack_require__(23);
-const categories = __webpack_require__(92);
-const configuration = __webpack_require__(17);
+const debug = __webpack_require__(9)("log4js:logger");
+const LoggingEvent = __webpack_require__(27);
+const levels = __webpack_require__(24);
+const clustering = __webpack_require__(26);
+const categories = __webpack_require__(95);
+const configuration = __webpack_require__(20);
 
 const stackReg = /at (?:(.+)\s+\()?(?:(.+?):(\d+)(?::(\d+))?|([^)]+))\)?/;
 function defaultParseCallStack(data, skipIdx = 4) {
@@ -8802,12 +8932,12 @@ module.exports = Logger;
 
 
 /***/ }),
-/* 94 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable no-plusplus */
 
-const levels = __webpack_require__(21);
+const levels = __webpack_require__(24);
 
 const DEFAULT_FORMAT =
   ":remote-addr - -" +
@@ -9110,111 +9240,656 @@ module.exports = function getLogger(logger4js, options) {
 
 
 /***/ }),
-/* 95 */
-/***/ (function(module, exports, __webpack_require__) {
+/* 98 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "URI", function() { return URI; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "uriToFsPath", function() { return uriToFsPath; });
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Compiler = void 0;
-const coc = __importStar(__webpack_require__(1));
-class Compiler {
-    constructor(solcCachePath) {
-        this.solcCachePath = solcCachePath;
-        this.outputChannel = coc.workspace.createOutputChannel('solidity compilation');
+var __extends = (undefined && undefined.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+var _a;
+var isWindows;
+if (typeof process === 'object') {
+    isWindows = process.platform === 'win32';
+}
+else if (typeof navigator === 'object') {
+    var userAgent = navigator.userAgent;
+    isWindows = userAgent.indexOf('Windows') >= 0;
+}
+function isHighSurrogate(charCode) {
+    return (0xD800 <= charCode && charCode <= 0xDBFF);
+}
+function isLowSurrogate(charCode) {
+    return (0xDC00 <= charCode && charCode <= 0xDFFF);
+}
+function isLowerAsciiHex(code) {
+    return code >= 97 /* a */ && code <= 102 /* f */;
+}
+function isLowerAsciiLetter(code) {
+    return code >= 97 /* a */ && code <= 122 /* z */;
+}
+function isUpperAsciiLetter(code) {
+    return code >= 65 /* A */ && code <= 90 /* Z */;
+}
+function isAsciiLetter(code) {
+    return isLowerAsciiLetter(code) || isUpperAsciiLetter(code);
+}
+//#endregion
+var _schemePattern = /^\w[\w\d+.-]*$/;
+var _singleSlashStart = /^\//;
+var _doubleSlashStart = /^\/\//;
+function _validateUri(ret, _strict) {
+    // scheme, must be set
+    if (!ret.scheme && _strict) {
+        throw new Error("[UriError]: Scheme is missing: {scheme: \"\", authority: \"" + ret.authority + "\", path: \"" + ret.path + "\", query: \"" + ret.query + "\", fragment: \"" + ret.fragment + "\"}");
+    }
+    // scheme, https://tools.ietf.org/html/rfc3986#section-3.1
+    // ALPHA *( ALPHA / DIGIT / "+" / "-" / "." )
+    if (ret.scheme && !_schemePattern.test(ret.scheme)) {
+        throw new Error('[UriError]: Scheme contains illegal characters.');
+    }
+    // path, http://tools.ietf.org/html/rfc3986#section-3.3
+    // If a URI contains an authority component, then the path component
+    // must either be empty or begin with a slash ("/") character.  If a URI
+    // does not contain an authority component, then the path cannot begin
+    // with two slash characters ("//").
+    if (ret.path) {
+        if (ret.authority) {
+            if (!_singleSlashStart.test(ret.path)) {
+                throw new Error('[UriError]: If a URI contains an authority component, then the path component must either be empty or begin with a slash ("/") character');
+            }
+        }
+        else {
+            if (_doubleSlashStart.test(ret.path)) {
+                throw new Error('[UriError]: If a URI does not contain an authority component, then the path cannot begin with two slash characters ("//")');
+            }
+        }
     }
 }
-exports.Compiler = Compiler;
-
-
-/***/ }),
-/* 96 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.compileActiveContract = exports.initDiagnosticCollection = void 0;
-const coc = __importStar(__webpack_require__(1));
-let diagnosticCollection;
-function initDiagnosticCollection(diagnostics) {
-    diagnosticCollection = diagnostics;
+// for a while we allowed uris *without* schemes and this is the migration
+// for them, e.g. an uri without scheme and without strict-mode warns and falls
+// back to the file-scheme. that should cause the least carnage and still be a
+// clear warning
+function _schemeFix(scheme, _strict) {
+    if (!scheme && !_strict) {
+        return 'file';
+    }
+    return scheme;
 }
-exports.initDiagnosticCollection = initDiagnosticCollection;
-async function compileActiveContract(compiler) {
-    const editor = await coc.workspace.document;
-    if (!editor) {
-        return null; // We need something open
+// implements a bit of https://tools.ietf.org/html/rfc3986#section-5
+function _referenceResolution(scheme, path) {
+    // the slash-character is our 'default base' as we don't
+    // support constructing URIs relative to other URIs. This
+    // also means that we alter and potentially break paths.
+    // see https://tools.ietf.org/html/rfc3986#section-5.1.4
+    switch (scheme) {
+        case 'https':
+        case 'http':
+        case 'file':
+            if (!path) {
+                path = _slash;
+            }
+            else if (path[0] !== _slash) {
+                path = _slash + path;
+            }
+            break;
     }
-    if (editor.filetype != 'solidity') {
-        coc.workspace.showMessage('WARNING: This not a solidity file (*.sol)');
-        return null;
+    return path;
+}
+var _empty = '';
+var _slash = '/';
+var _regexp = /^(([^:/?#]+?):)?(\/\/([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?/;
+/**
+ * Uniform Resource Identifier (URI) http://tools.ietf.org/html/rfc3986.
+ * This class is a simple parser which creates the basic component parts
+ * (http://tools.ietf.org/html/rfc3986#section-3) with minimal validation
+ * and encoding.
+ *
+ * ```txt
+ *       foo://example.com:8042/over/there?name=ferret#nose
+ *       \_/   \______________/\_________/ \_________/ \__/
+ *        |           |            |            |        |
+ *     scheme     authority       path        query   fragment
+ *        |   _____________________|__
+ *       / \ /                        \
+ *       urn:example:animal:ferret:nose
+ * ```
+ */
+var URI = /** @class */ (function () {
+    /**
+     * @internal
+     */
+    function URI(schemeOrData, authority, path, query, fragment, _strict) {
+        if (_strict === void 0) { _strict = false; }
+        if (typeof schemeOrData === 'object') {
+            this.scheme = schemeOrData.scheme || _empty;
+            this.authority = schemeOrData.authority || _empty;
+            this.path = schemeOrData.path || _empty;
+            this.query = schemeOrData.query || _empty;
+            this.fragment = schemeOrData.fragment || _empty;
+            // no validation because it's this URI
+            // that creates uri components.
+            // _validateUri(this);
+        }
+        else {
+            this.scheme = _schemeFix(schemeOrData, _strict);
+            this.authority = authority || _empty;
+            this.path = _referenceResolution(this.scheme, path || _empty);
+            this.query = query || _empty;
+            this.fragment = fragment || _empty;
+            _validateUri(this, _strict);
+        }
     }
-    // TODO: Remove when porting continues.
-    coc.workspace.showMessage('WOULD COMPILE>');
-    // // Check if is folder, if not stop we need to output to a bin folder on rootPath
-    // if (vscode.workspace.workspaceFolders[0] === undefined) {
-    //     vscode.window.showWarningMessage('Please open a folder in Visual Studio Code as a workspace');
-    //     return;
+    URI.isUri = function (thing) {
+        if (thing instanceof URI) {
+            return true;
+        }
+        if (!thing) {
+            return false;
+        }
+        return typeof thing.authority === 'string'
+            && typeof thing.fragment === 'string'
+            && typeof thing.path === 'string'
+            && typeof thing.query === 'string'
+            && typeof thing.scheme === 'string'
+            && typeof thing.fsPath === 'function'
+            && typeof thing.with === 'function'
+            && typeof thing.toString === 'function';
+    };
+    Object.defineProperty(URI.prototype, "fsPath", {
+        // ---- filesystem path -----------------------
+        /**
+         * Returns a string representing the corresponding file system path of this URI.
+         * Will handle UNC paths, normalizes windows drive letters to lower-case, and uses the
+         * platform specific path separator.
+         *
+         * * Will *not* validate the path for invalid characters and semantics.
+         * * Will *not* look at the scheme of this URI.
+         * * The result shall *not* be used for display purposes but for accessing a file on disk.
+         *
+         *
+         * The *difference* to `URI#path` is the use of the platform specific separator and the handling
+         * of UNC paths. See the below sample of a file-uri with an authority (UNC path).
+         *
+         * ```ts
+            const u = URI.parse('file://server/c$/folder/file.txt')
+            u.authority === 'server'
+            u.path === '/shares/c$/file.txt'
+            u.fsPath === '\\server\c$\folder\file.txt'
+        ```
+         *
+         * Using `URI#path` to read a file (using fs-apis) would not be enough because parts of the path,
+         * namely the server name, would be missing. Therefore `URI#fsPath` exists - it's sugar to ease working
+         * with URIs that represent files on disk (`file` scheme).
+         */
+        get: function () {
+            // if (this.scheme !== 'file') {
+            // 	console.warn(`[UriError] calling fsPath with scheme ${this.scheme}`);
+            // }
+            return uriToFsPath(this, false);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    // ---- modify to new -------------------------
+    URI.prototype.with = function (change) {
+        if (!change) {
+            return this;
+        }
+        var scheme = change.scheme, authority = change.authority, path = change.path, query = change.query, fragment = change.fragment;
+        if (scheme === undefined) {
+            scheme = this.scheme;
+        }
+        else if (scheme === null) {
+            scheme = _empty;
+        }
+        if (authority === undefined) {
+            authority = this.authority;
+        }
+        else if (authority === null) {
+            authority = _empty;
+        }
+        if (path === undefined) {
+            path = this.path;
+        }
+        else if (path === null) {
+            path = _empty;
+        }
+        if (query === undefined) {
+            query = this.query;
+        }
+        else if (query === null) {
+            query = _empty;
+        }
+        if (fragment === undefined) {
+            fragment = this.fragment;
+        }
+        else if (fragment === null) {
+            fragment = _empty;
+        }
+        if (scheme === this.scheme
+            && authority === this.authority
+            && path === this.path
+            && query === this.query
+            && fragment === this.fragment) {
+            return this;
+        }
+        return new _URI(scheme, authority, path, query, fragment);
+    };
+    // ---- parse & validate ------------------------
+    /**
+     * Creates a new URI from a string, e.g. `http://www.msft.com/some/path`,
+     * `file:///usr/home`, or `scheme:with/path`.
+     *
+     * @param value A string which represents an URI (see `URI#toString`).
+     */
+    URI.parse = function (value, _strict) {
+        if (_strict === void 0) { _strict = false; }
+        var match = _regexp.exec(value);
+        if (!match) {
+            return new _URI(_empty, _empty, _empty, _empty, _empty);
+        }
+        return new _URI(match[2] || _empty, percentDecode(match[4] || _empty), percentDecode(match[5] || _empty), percentDecode(match[7] || _empty), percentDecode(match[9] || _empty), _strict);
+    };
+    /**
+     * Creates a new URI from a file system path, e.g. `c:\my\files`,
+     * `/usr/home`, or `\\server\share\some\path`.
+     *
+     * The *difference* between `URI#parse` and `URI#file` is that the latter treats the argument
+     * as path, not as stringified-uri. E.g. `URI.file(path)` is **not the same as**
+     * `URI.parse('file://' + path)` because the path might contain characters that are
+     * interpreted (# and ?). See the following sample:
+     * ```ts
+    const good = URI.file('/coding/c#/project1');
+    good.scheme === 'file';
+    good.path === '/coding/c#/project1';
+    good.fragment === '';
+    const bad = URI.parse('file://' + '/coding/c#/project1');
+    bad.scheme === 'file';
+    bad.path === '/coding/c'; // path is now broken
+    bad.fragment === '/project1';
+    ```
+     *
+     * @param path A file system path (see `URI#fsPath`)
+     */
+    URI.file = function (path) {
+        var authority = _empty;
+        // normalize to fwd-slashes on windows,
+        // on other systems bwd-slashes are valid
+        // filename character, eg /f\oo/ba\r.txt
+        if (isWindows) {
+            path = path.replace(/\\/g, _slash);
+        }
+        // check for authority as used in UNC shares
+        // or use the path as given
+        if (path[0] === _slash && path[1] === _slash) {
+            var idx = path.indexOf(_slash, 2);
+            if (idx === -1) {
+                authority = path.substring(2);
+                path = _slash;
+            }
+            else {
+                authority = path.substring(2, idx);
+                path = path.substring(idx) || _slash;
+            }
+        }
+        return new _URI('file', authority, path, _empty, _empty);
+    };
+    URI.from = function (components) {
+        return new _URI(components.scheme, components.authority, components.path, components.query, components.fragment);
+    };
+    // /**
+    //  * Join a URI path with path fragments and normalizes the resulting path.
+    //  *
+    //  * @param uri The input URI.
+    //  * @param pathFragment The path fragment to add to the URI path.
+    //  * @returns The resulting URI.
+    //  */
+    // static joinPath(uri: URI, ...pathFragment: string[]): URI {
+    // 	if (!uri.path) {
+    // 		throw new Error(`[UriError]: cannot call joinPaths on URI without path`);
+    // 	}
+    // 	let newPath: string;
+    // 	if (isWindows && uri.scheme === 'file') {
+    // 		newPath = URI.file(paths.win32.join(uriToFsPath(uri, true), ...pathFragment)).path;
+    // 	} else {
+    // 		newPath = paths.posix.join(uri.path, ...pathFragment);
+    // 	}
+    // 	return uri.with({ path: newPath });
     // }
-    // const contractsCollection = new ContractCollection();
-    // const contractCode = editor.document.getText();
-    // const contractPath = editor.document.fileName;
-    // const packageDefaultDependenciesDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesDirectory');
-    // const packageDefaultDependenciesContractsDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesContractsDirectory');
-    // const compilationOptimisation = vscode.workspace.getConfiguration('solidity').get<number>('compilerOptimization');
-    // const project = initialiseProject(vscode.workspace.workspaceFolders[0].uri.fsPath, packageDefaultDependenciesDirectory, packageDefaultDependenciesContractsDirectory);
-    // const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
-    // const packagesPath = formatPath(project.packagesDir);
-    // return compiler.compile(contractsCollection.getDefaultContractsForCompilation(compilationOptimisation),
-    //         diagnosticCollection,
-    //         project.projectPackage.build_dir,
-    //         project.projectPackage.absoluletPath,
-    //         null,
-    //         packagesPath,
-    //         contract.absolutePath);
-    // TODO: Remove after returning something real.
-    return new Promise(res => { res([]); });
+    // ---- printing/externalize ---------------------------
+    /**
+     * Creates a string representation for this URI. It's guaranteed that calling
+     * `URI.parse` with the result of this function creates an URI which is equal
+     * to this URI.
+     *
+     * * The result shall *not* be used for display purposes but for externalization or transport.
+     * * The result will be encoded using the percentage encoding and encoding happens mostly
+     * ignore the scheme-specific encoding rules.
+     *
+     * @param skipEncoding Do not encode the result, default is `false`
+     */
+    URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
+        return _asFormatted(this, skipEncoding);
+    };
+    URI.prototype.toJSON = function () {
+        return this;
+    };
+    URI.revive = function (data) {
+        if (!data) {
+            return data;
+        }
+        else if (data instanceof URI) {
+            return data;
+        }
+        else {
+            var result = new _URI(data);
+            result._formatted = data.external;
+            result._fsPath = data._sep === _pathSepMarker ? data.fsPath : null;
+            return result;
+        }
+    };
+    return URI;
+}());
+
+var _pathSepMarker = isWindows ? 1 : undefined;
+// eslint-disable-next-line @typescript-eslint/class-name-casing
+var _URI = /** @class */ (function (_super) {
+    __extends(_URI, _super);
+    function _URI() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this._formatted = null;
+        _this._fsPath = null;
+        return _this;
+    }
+    Object.defineProperty(_URI.prototype, "fsPath", {
+        get: function () {
+            if (!this._fsPath) {
+                this._fsPath = uriToFsPath(this, false);
+            }
+            return this._fsPath;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    _URI.prototype.toString = function (skipEncoding) {
+        if (skipEncoding === void 0) { skipEncoding = false; }
+        if (!skipEncoding) {
+            if (!this._formatted) {
+                this._formatted = _asFormatted(this, false);
+            }
+            return this._formatted;
+        }
+        else {
+            // we don't cache that
+            return _asFormatted(this, true);
+        }
+    };
+    _URI.prototype.toJSON = function () {
+        var res = {
+            $mid: 1
+        };
+        // cached state
+        if (this._fsPath) {
+            res.fsPath = this._fsPath;
+            res._sep = _pathSepMarker;
+        }
+        if (this._formatted) {
+            res.external = this._formatted;
+        }
+        // uri components
+        if (this.path) {
+            res.path = this.path;
+        }
+        if (this.scheme) {
+            res.scheme = this.scheme;
+        }
+        if (this.authority) {
+            res.authority = this.authority;
+        }
+        if (this.query) {
+            res.query = this.query;
+        }
+        if (this.fragment) {
+            res.fragment = this.fragment;
+        }
+        return res;
+    };
+    return _URI;
+}(URI));
+// reserved characters: https://tools.ietf.org/html/rfc3986#section-2.2
+var encodeTable = (_a = {},
+    _a[58 /* Colon */] = '%3A',
+    _a[47 /* Slash */] = '%2F',
+    _a[63 /* QuestionMark */] = '%3F',
+    _a[35 /* Hash */] = '%23',
+    _a[91 /* OpenSquareBracket */] = '%5B',
+    _a[93 /* CloseSquareBracket */] = '%5D',
+    _a[64 /* AtSign */] = '%40',
+    _a[33 /* ExclamationMark */] = '%21',
+    _a[36 /* DollarSign */] = '%24',
+    _a[38 /* Ampersand */] = '%26',
+    _a[39 /* SingleQuote */] = '%27',
+    _a[40 /* OpenParen */] = '%28',
+    _a[41 /* CloseParen */] = '%29',
+    _a[42 /* Asterisk */] = '%2A',
+    _a[43 /* Plus */] = '%2B',
+    _a[44 /* Comma */] = '%2C',
+    _a[59 /* Semicolon */] = '%3B',
+    _a[61 /* Equals */] = '%3D',
+    _a[32 /* Space */] = '%20',
+    _a);
+function encodeURIComponentFast(uriComponent, allowSlash) {
+    var res = undefined;
+    var nativeEncodePos = -1;
+    for (var pos = 0; pos < uriComponent.length; pos++) {
+        var code = uriComponent.charCodeAt(pos);
+        // unreserved characters: https://tools.ietf.org/html/rfc3986#section-2.3
+        if ((code >= 97 /* a */ && code <= 122 /* z */)
+            || (code >= 65 /* A */ && code <= 90 /* Z */)
+            || (code >= 48 /* Digit0 */ && code <= 57 /* Digit9 */)
+            || code === 45 /* Dash */
+            || code === 46 /* Period */
+            || code === 95 /* Underline */
+            || code === 126 /* Tilde */
+            || (allowSlash && code === 47 /* Slash */)) {
+            // check if we are delaying native encode
+            if (nativeEncodePos !== -1) {
+                res += encodeURIComponent(uriComponent.substring(nativeEncodePos, pos));
+                nativeEncodePos = -1;
+            }
+            // check if we write into a new string (by default we try to return the param)
+            if (res !== undefined) {
+                res += uriComponent.charAt(pos);
+            }
+        }
+        else {
+            // encoding needed, we need to allocate a new string
+            if (res === undefined) {
+                res = uriComponent.substr(0, pos);
+            }
+            // check with default table first
+            var escaped = encodeTable[code];
+            if (escaped !== undefined) {
+                // check if we are delaying native encode
+                if (nativeEncodePos !== -1) {
+                    res += encodeURIComponent(uriComponent.substring(nativeEncodePos, pos));
+                    nativeEncodePos = -1;
+                }
+                // append escaped variant to result
+                res += escaped;
+            }
+            else if (nativeEncodePos === -1) {
+                // use native encode only when needed
+                nativeEncodePos = pos;
+            }
+        }
+    }
+    if (nativeEncodePos !== -1) {
+        res += encodeURIComponent(uriComponent.substring(nativeEncodePos));
+    }
+    return res !== undefined ? res : uriComponent;
 }
-exports.compileActiveContract = compileActiveContract;
+function encodeURIComponentMinimal(path) {
+    var res = undefined;
+    for (var pos = 0; pos < path.length; pos++) {
+        var code = path.charCodeAt(pos);
+        if (code === 35 /* Hash */ || code === 63 /* QuestionMark */) {
+            if (res === undefined) {
+                res = path.substr(0, pos);
+            }
+            res += encodeTable[code];
+        }
+        else {
+            if (res !== undefined) {
+                res += path[pos];
+            }
+        }
+    }
+    return res !== undefined ? res : path;
+}
+/**
+ * Compute `fsPath` for the given uri
+ */
+function uriToFsPath(uri, keepDriveLetterCasing) {
+    var value;
+    if (uri.authority && uri.path.length > 1 && uri.scheme === 'file') {
+        // unc path: file://shares/c$/far/boo
+        value = "//" + uri.authority + uri.path;
+    }
+    else if (uri.path.charCodeAt(0) === 47 /* Slash */
+        && (uri.path.charCodeAt(1) >= 65 /* A */ && uri.path.charCodeAt(1) <= 90 /* Z */ || uri.path.charCodeAt(1) >= 97 /* a */ && uri.path.charCodeAt(1) <= 122 /* z */)
+        && uri.path.charCodeAt(2) === 58 /* Colon */) {
+        if (!keepDriveLetterCasing) {
+            // windows drive letter: file:///c:/far/boo
+            value = uri.path[1].toLowerCase() + uri.path.substr(2);
+        }
+        else {
+            value = uri.path.substr(1);
+        }
+    }
+    else {
+        // other path
+        value = uri.path;
+    }
+    if (isWindows) {
+        value = value.replace(/\//g, '\\');
+    }
+    return value;
+}
+/**
+ * Create the external version of a uri
+ */
+function _asFormatted(uri, skipEncoding) {
+    var encoder = !skipEncoding
+        ? encodeURIComponentFast
+        : encodeURIComponentMinimal;
+    var res = '';
+    var scheme = uri.scheme, authority = uri.authority, path = uri.path, query = uri.query, fragment = uri.fragment;
+    if (scheme) {
+        res += scheme;
+        res += ':';
+    }
+    if (authority || scheme === 'file') {
+        res += _slash;
+        res += _slash;
+    }
+    if (authority) {
+        var idx = authority.indexOf('@');
+        if (idx !== -1) {
+            // <user>@<auth>
+            var userinfo = authority.substr(0, idx);
+            authority = authority.substr(idx + 1);
+            idx = userinfo.indexOf(':');
+            if (idx === -1) {
+                res += encoder(userinfo, false);
+            }
+            else {
+                // <user>:<pass>@<auth>
+                res += encoder(userinfo.substr(0, idx), false);
+                res += ':';
+                res += encoder(userinfo.substr(idx + 1), false);
+            }
+            res += '@';
+        }
+        authority = authority.toLowerCase();
+        idx = authority.indexOf(':');
+        if (idx === -1) {
+            res += encoder(authority, false);
+        }
+        else {
+            // <auth>:<port>
+            res += encoder(authority.substr(0, idx), false);
+            res += authority.substr(idx);
+        }
+    }
+    if (path) {
+        // lower-case windows drive letters in /C:/fff or C:/fff
+        if (path.length >= 3 && path.charCodeAt(0) === 47 /* Slash */ && path.charCodeAt(2) === 58 /* Colon */) {
+            var code = path.charCodeAt(1);
+            if (code >= 65 /* A */ && code <= 90 /* Z */) {
+                path = "/" + String.fromCharCode(code + 32) + ":" + path.substr(3); // "/c:".length === 3
+            }
+        }
+        else if (path.length >= 2 && path.charCodeAt(1) === 58 /* Colon */) {
+            var code = path.charCodeAt(0);
+            if (code >= 65 /* A */ && code <= 90 /* Z */) {
+                path = String.fromCharCode(code + 32) + ":" + path.substr(2); // "/c:".length === 3
+            }
+        }
+        // encode the rest of the path
+        res += encoder(path, true);
+    }
+    if (query) {
+        res += '?';
+        res += encoder(query, false);
+    }
+    if (fragment) {
+        res += '#';
+        res += !skipEncoding ? encodeURIComponentFast(fragment, false) : fragment;
+    }
+    return res;
+}
+// --- decode
+function decodeURIComponentGraceful(str) {
+    try {
+        return decodeURIComponent(str);
+    }
+    catch (_a) {
+        if (str.length > 3) {
+            return str.substr(0, 3) + decodeURIComponentGraceful(str.substr(3));
+        }
+        else {
+            return str;
+        }
+    }
+}
+var _rEncodedAsHex = /(%[0-9A-Za-z][0-9A-Za-z])+/g;
+function percentDecode(str) {
+    if (!str.match(_rEncodedAsHex)) {
+        return str;
+    }
+    return str.replace(_rEncodedAsHex, function (match) { return decodeURIComponentGraceful(match); });
+}
 
 
 /***/ })
