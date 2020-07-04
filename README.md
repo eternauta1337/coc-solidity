@@ -29,10 +29,11 @@ Port of Juan Blanco's Solidity plugin for VSCode to vim8/neovim, based on [coc.n
 * `cd packages/coc-solidity`
 * `yarn watch`
 
-**Running the extension**
+**Running/reloading the extension**
 * Open a project that has Solidity contracts.
 * If you did the `set runtimepath` thing correctly, you should see a `coc-solidity works!` message when vim starts.
 * You can reload the extension in the test project with `:CocList extensions`, pick the extension, then `TAB`, then `a` for reload.
+* A faster way to reload extensions is `:call CocAction('reloadExtension', 'coc-solidity')`
 
 **Seeing logger.info() output**
 * Once running, coc's logger creates a file (in my case) `/run/usr/1000/coc-nvim-#.log`.

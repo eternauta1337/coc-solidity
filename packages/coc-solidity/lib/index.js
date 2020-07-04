@@ -140,6 +140,123 @@ async function activate(context) {
     */
     context.subscriptions.push(diagnosticCollection);
     compileActive_1.initDiagnosticCollection(diagnosticCollection);
+    context.subscriptions.push(coc.commands.registerCommand('coc-solidity.compile.active', async () => {
+        coc.workspace.showMessage('coc-solidity.compile.active');
+        const compiledResults = await compileActive_1.compileActiveContract(compiler);
+        // autoCodeGenerateAfterCompilation(compiledResults, null, diagnosticCollection);
+        // return compiledResults;
+    }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.compile', () => {
+    //     compileAllContracts(compiler, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenCSharpProject', (args: any[]) => {
+    //     codeGenerateNethereumCQSCsharp(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.compileAndCodegenCSharpProject', async (args: any[]) => {
+    //     const compiledResults = await compileActiveContract(compiler);
+    //     compiledResults.forEach(file => {
+    //         codeGenerateCQS(file, 0, args, diagnosticCollection);
+    //     });
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenNethereumCodeGenSettings', (args: any[]) => {
+    //     generateNethereumCodeSettingsFile();
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenVbNetProject', (args: any[]) => {
+    //     codeGenerateNethereumCQSVbNet(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.compileAndCodegenVbNetProject', async (args: any[]) => {
+    //     const compiledResults = await compileActiveContract(compiler);
+    //     compiledResults.forEach(file => {
+    //         codeGenerateCQS(file, 1, args, diagnosticCollection);
+    //     });
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenFSharpProject', (args: any[]) => {
+    //     codeGenerateNethereumCQSFSharp(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.compileAndCodegenFSharpProject', async (args: any[]) => {
+    //     const compiledResults = await compileActiveContract(compiler);
+    //     compiledResults.forEach(file => {
+    //         codeGenerateCQS(file, 3, args, diagnosticCollection);
+    //     });
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenCSharpProjectAll', (args: any[]) => {
+    //     codeGenerateNethereumCQSCSharpAll(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenVbNetProjectAll', (args: any[]) => {
+    //     codeGenerateNethereumCQSVbAll(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenFSharpProjectAll', (args: any[]) => {
+    //     codeGenerateNethereumCQSFSharpAll(args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenCSharpProjectAllAbiCurrent', (args: any[]) => {
+    //     codeGenerateAllFilesFromAbiInCurrentFolder(0, args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenVbNetProjectAllAbiCurrent', (args: any[]) => {
+    //     codeGenerateAllFilesFromAbiInCurrentFolder(1, args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.codegenFSharpProjectAllAbiCurrent', (args: any[]) => {
+    //     codeGenerateAllFilesFromAbiInCurrentFolder(3, args, diagnosticCollection);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.fixDocument', () => {
+    //     lintAndfixCurrentDocument();
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.compilerInfo', async () => {
+    //     await compiler.outputCompilerInfoEnsuringInitialised();
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.solcReleases', async () => {
+    //     compiler.outputSolcReleases();
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.selectWorkspaceRemoteSolcVersion', async () => {
+    //     compiler.selectRemoteVersion(vscode.ConfigurationTarget.Workspace);
+    // }));
+    // context.subscriptions.push(vscode.commands.registerCommand('solidity.selectGlobalRemoteSolcVersion', async () => {
+    //     compiler.selectRemoteVersion(vscode.ConfigurationTarget.Global);
+    // }));
+    // context.subscriptions.push(
+    //     vscode.languages.registerDocumentFormattingEditProvider('solidity', {
+    //         provideDocumentFormattingEdits(document: vscode.TextDocument): vscode.TextEdit[] {
+    //             return formatDocument(document, context);
+    //         },
+    //     }));
+    // const serverModule = path.join(__dirname, 'server.js');
+    // const serverOptions: ServerOptions = {
+    //     debug: {
+    //         module: serverModule,
+    //         options: {
+    //             execArgv: ['--nolazy', '--inspect=6009'],
+    //         },
+    //         transport: TransportKind.ipc,
+    //     },
+    //     run: {
+    //         module: serverModule,
+    //         transport: TransportKind.ipc,
+    //     },
+    // };
+    // const clientOptions: LanguageClientOptions = {
+    //     documentSelector: [
+    //         { language: 'solidity', scheme: 'file' },
+    //         { language: 'solidity', scheme: 'untitled' },
+    //     ],
+    //     revealOutputChannelOn: RevealOutputChannelOn.Never,
+    //     synchronize: {
+    //         // Synchronize the setting section 'solidity' to the server
+    //         configurationSection: 'solidity',
+    //         // Notify the server about file changes to '.sol.js files contain in the workspace (TODO node, linter)
+    //         // fileEvents: vscode.workspace.createFileSystemWatcher('**/.sol.js'),
+    //     },
+    //     initializationOptions: context.extensionPath,
+    // };
+    // let clientDisposable;
+    // if (ws) {
+    //     clientDisposable = new LanguageClient(
+    //         'solidity',
+    //         'Solidity Language Server',
+    //         serverOptions,
+    //         clientOptions).start();
+    // }
+    // // Push the disposable to the context's subscriptions so that the
+    // // client can be deactivated on extension deactivation
+    // context.subscriptions.push(clientDisposable);
 }
 exports.activate = activate;
 
@@ -9035,13 +9152,69 @@ exports.Compiler = Compiler;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.initDiagnosticCollection = void 0;
+exports.compileActiveContract = exports.initDiagnosticCollection = void 0;
+const coc = __importStar(__webpack_require__(1));
 let diagnosticCollection;
 function initDiagnosticCollection(diagnostics) {
     diagnosticCollection = diagnostics;
 }
 exports.initDiagnosticCollection = initDiagnosticCollection;
+async function compileActiveContract(compiler) {
+    const editor = await coc.workspace.document;
+    if (!editor) {
+        return null; // We need something open
+    }
+    if (editor.filetype != 'solidity') {
+        coc.workspace.showMessage('WARNING: This not a solidity file (*.sol)');
+        return null;
+    }
+    // TODO: Remove when porting continues.
+    coc.workspace.showMessage('WOULD COMPILE>');
+    // // Check if is folder, if not stop we need to output to a bin folder on rootPath
+    // if (vscode.workspace.workspaceFolders[0] === undefined) {
+    //     vscode.window.showWarningMessage('Please open a folder in Visual Studio Code as a workspace');
+    //     return;
+    // }
+    // const contractsCollection = new ContractCollection();
+    // const contractCode = editor.document.getText();
+    // const contractPath = editor.document.fileName;
+    // const packageDefaultDependenciesDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesDirectory');
+    // const packageDefaultDependenciesContractsDirectory = vscode.workspace.getConfiguration('solidity').get<string>('packageDefaultDependenciesContractsDirectory');
+    // const compilationOptimisation = vscode.workspace.getConfiguration('solidity').get<number>('compilerOptimization');
+    // const project = initialiseProject(vscode.workspace.workspaceFolders[0].uri.fsPath, packageDefaultDependenciesDirectory, packageDefaultDependenciesContractsDirectory);
+    // const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
+    // const packagesPath = formatPath(project.packagesDir);
+    // return compiler.compile(contractsCollection.getDefaultContractsForCompilation(compilationOptimisation),
+    //         diagnosticCollection,
+    //         project.projectPackage.build_dir,
+    //         project.projectPackage.absoluletPath,
+    //         null,
+    //         packagesPath,
+    //         contract.absolutePath);
+    // TODO: Remove after returning something real.
+    return new Promise(res => { res([]); });
+}
+exports.compileActiveContract = compileActiveContract;
 
 
 /***/ })

@@ -44,8 +44,8 @@
     },
     "commands": [
       {
-        "command": "coc-solidity.testCommand",
-        "title": "coc-solidity test command title"
+        "command": "coc-solidity.compile.active",
+        "title": ""
       }
     ]
   }
