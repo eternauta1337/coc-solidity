@@ -1,8 +1,8 @@
 import * as coc from 'coc.nvim'
 
 export class Compiler {
-  private solcCachePath: string
-  private outputChannel: coc.OutputChannel
+  private solcCachePath: string;
+  private outputChannel: coc.OutputChannel;
 
   constructor(solcCachePath: string) {
     this.solcCachePath = solcCachePath;

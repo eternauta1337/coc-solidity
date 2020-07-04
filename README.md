@@ -44,6 +44,7 @@ Port of Juan Blanco's Solidity plugin for VSCode to vim8/neovim, based on [coc.n
 * Check out coc.nvim and search for the function or object you're trying to port.
 * Or see above on how to observe the port process of another extension like coc-spell-checker.
 
-#### Docs
+### Docs / help
 * [vscode-extensions-docs](https://www.google.com/search?client=firefox-b-d&q=vscode+extension+api)
 * [coc-extensions-docs](https://github.com/neoclide/coc.nvim/wiki/Using-coc-extensions)
+* [coc-gitter](https://gitter.im/neoclide/coc.nvim)

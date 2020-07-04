@@ -113,7 +113,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.activate = void 0;
 const coc = __importStar(__webpack_require__(1));
 const compiler_1 = __webpack_require__(95);
-// import { compileActiveContract, initDiagnosticCollection } from './compileActive';
+const compileActive_1 = __webpack_require__(96);
 const logger = __webpack_require__(2)('workspace');
 let diagnosticCollection;
 let compiler;
@@ -123,8 +123,23 @@ async function activate(context) {
     const ws = coc.workspace.workspaceFolders;
     diagnosticCollection = coc.languages.createDiagnosticCollection('solidity');
     compiler = new compiler_1.Compiler(context.extensionPath);
+    /*
+    const configuration = vscode.workspace.getConfiguration('solidity');
+    const cacheConfiguration = configuration.get<string>('solcCache');
+    if (typeof cacheConfiguration === 'undefined' || cacheConfiguration === null) {
+        configuration.update('solcCache', context.extensionPath, vscode.ConfigurationTarget.Global);
+    }*/
+    /* WSL is affected by this
+    workspace.onDidChangeConfiguration(async (event) => {
+        if (event.affectsConfiguration('solidity.enableLocalNodeCompiler') ||
+            event.affectsConfiguration('solidity.compileUsingRemoteVersion') ||
+            event.affectsConfiguration('solidity.compileUsingLocalVersion')) {
+            await initialiseCompiler();
+        }
+    });
+    */
     context.subscriptions.push(diagnosticCollection);
-    // initDiagnosticCollection(diagnosticCollection);
+    compileActive_1.initDiagnosticCollection(diagnosticCollection);
 }
 exports.activate = activate;
 
@@ -9012,6 +9027,21 @@ class Compiler {
     }
 }
 exports.Compiler = Compiler;
+
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initDiagnosticCollection = void 0;
+let diagnosticCollection;
+function initDiagnosticCollection(diagnostics) {
+    diagnosticCollection = diagnostics;
+}
+exports.initDiagnosticCollection = initDiagnosticCollection;
 
 
 /***/ })
