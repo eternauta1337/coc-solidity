@@ -1,7 +1,7 @@
-// import * as fs from 'fs';
+import * as fs from 'fs';
 import { Contract } from './contract';
-// import {Project} from './project';
-// import {formatPath} from '../util';
+import { Project } from './project';
+import { formatPath } from '../util';
 
 export class ContractCollection {
   public contracts: Array<Contract>;
@@ -13,9 +13,9 @@ export class ContractCollection {
 //         return contract.absolutePath === contractPath;
 //     }
 
-//     public containsContract(contractPath: string) {
-//         return this.contracts.findIndex((contract: Contract) => { return contract.absolutePath === contractPath; }) > -1;
-//     }
+    public containsContract(contractPath: string) {
+      return this.contracts.findIndex((contract: Contract) => { return contract.absolutePath === contractPath; }) > -1;
+    }
 
 //     public getDefaultContractsForCompilation(optimizeCompilationRuns = 200) {
 //         const compilerOutputSelection = {
@@ -60,38 +60,39 @@ export class ContractCollection {
 //     }
 
 
-//     public addContractAndResolveImports(contractPath: string, code: string, project: Project) {
-//         const contract = this.addContract(contractPath, code);
-//         if (contract !== null) {
-//             contract.resolveImports();
-//             contract.imports.forEach(foundImport => {
-//                 if (fs.existsSync(foundImport)) {
-//                     if (!this.containsContract(foundImport)) {
-//                         const importContractCode = this.readContractCode(foundImport);
-//                         if (importContractCode != null) {
-//                             this.addContractAndResolveImports(foundImport, importContractCode, project);
-//                         }
-//                     }
-//                 } else {
-//                     this.addContractAndResolveDependencyImport(foundImport, contract, project);
-//                 }
-//             });
-//         }
-//         return contract;
-//     }
+    public addContractAndResolveImports(contractPath: string, code: string, project: Project) {
+      const contract = this.addContract(contractPath, code);
+      if (contract !== null) {
+        contract.resolveImports();
+        console.log('contract imports', contract.imports) // TODO: Port point ajs
+        contract.imports.forEach(foundImport => {
+          if (fs.existsSync(foundImport)) {
+            if (!this.containsContract(foundImport)) {
+              const importContractCode = this.readContractCode(foundImport);
+              if (importContractCode != null) {
+                this.addContractAndResolveImports(foundImport, importContractCode, project);
+              }
+            }
+          } else {
+            this.addContractAndResolveDependencyImport(foundImport, contract, project);
+          }
+        });
+      }
+      return contract;
+    }
 
-//     private addContract(contractPath: string, code: string) {
-//         if (!this.containsContract(contractPath)) {
-//             const contract = new Contract(contractPath, code);
-//             this.contracts.push(contract);
-//             return contract;
-//         }
-//         return null;
-//     }
+    private addContract(contractPath: string, code: string) {
+      if (!this.containsContract(contractPath)) {
+        const contract = new Contract(contractPath, code);
+        this.contracts.push(contract);
+        return contract;
+      }
+      return null;
+    }
 
-//     private formatContractPath(contractPath: string) {
-//         return formatPath(contractPath);
-//     }
+    private formatContractPath(contractPath: string) {
+      return formatPath(contractPath);
+    }
 
 //     private getAllImportFromPackages() {
 //         const importsFromPackages = new Array<string>();
@@ -106,26 +107,26 @@ export class ContractCollection {
 //         return importsFromPackages;
 //     }
 
-//     private readContractCode(contractPath: string) {
-//         if (fs.existsSync(contractPath)) {
-//             return fs.readFileSync(contractPath, 'utf8');
-//         }
-//         return null;
-//     }
+    private readContractCode(contractPath: string) {
+      if (fs.existsSync(contractPath)) {
+          return fs.readFileSync(contractPath, 'utf8');
+      }
+      return null;
+    }
 
-//     private addContractAndResolveDependencyImport(dependencyImport: string, contract: Contract, project: Project) {
-//         const depPack = project.findPackage(dependencyImport);
-//         if (depPack !== undefined) {
-//             const depImportPath = this.formatContractPath(depPack.resolveImport(dependencyImport));
-//             if (!this.containsContract(depImportPath)) {
-//                 const importContractCode = this.readContractCode(depImportPath);
-//                 if (importContractCode != null) {
-//                     this.addContractAndResolveImports(depImportPath, importContractCode, project);
-//                     contract.replaceDependencyPath(dependencyImport, depImportPath);
-//                 }
-//             } else {
-//                 contract.replaceDependencyPath(dependencyImport, depImportPath);
-//             }
-//         }
-//     }
+    private addContractAndResolveDependencyImport(dependencyImport: string, contract: Contract, project: Project) {
+      const depPack = project.findPackage(dependencyImport);
+      if (depPack !== undefined) {
+        const depImportPath = this.formatContractPath(depPack.resolveImport(dependencyImport)!);
+        if (!this.containsContract(depImportPath)) {
+          const importContractCode = this.readContractCode(depImportPath);
+          if (importContractCode != null) {
+            this.addContractAndResolveImports(depImportPath, importContractCode, project);
+            contract.replaceDependencyPath(dependencyImport, depImportPath);
+          }
+        } else {
+          contract.replaceDependencyPath(dependencyImport, depImportPath);
+        }
+      }
+    }
 }
