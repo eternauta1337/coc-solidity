@@ -299,7 +299,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Compiler = void 0;
 const coc = __importStar(__webpack_require__(1));
+// import * as fs from 'fs';
+// import * as path from 'path';
+// import * as fsex from 'fs-extra';
+// import * as https from 'https';
+// import { SolcCompiler, compilerType } from './solcCompiler';
+// import { errorsToDiagnostics } from './solErrorsToDiaganosticsClient';
 class Compiler {
+    // private solc: SolcCompiler;
     constructor(solcCachePath) {
         this.solcCachePath = solcCachePath;
         this.outputChannel = coc.workspace.createOutputChannel('solidity compilation');
@@ -339,7 +346,7 @@ const coc = __importStar(__webpack_require__(1));
 const contractsCollection_1 = __webpack_require__(4);
 const vscode_uri_1 = __webpack_require__(5);
 const projectService_1 = __webpack_require__(6);
-// import { formatPath } from './util';
+const util_1 = __webpack_require__(120);
 let diagnosticCollection;
 function initDiagnosticCollection(diagnostics) {
     diagnosticCollection = diagnostics;
@@ -370,17 +377,18 @@ async function compileActiveContract(compiler) {
     const projectPath = vscode_uri_1.URI.parse(projectUri).fsPath;
     const project = projectService_1.initialiseProject(projectPath, packageDefaultDependenciesDirectory, packageDefaultDependenciesContractsDirectory);
     const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
-    console.log(contract); // TODO: Port point ajs
-    // const packagesPath = formatPath(project.packagesDir);
-    // TODO: Remove when porting continues.
-    coc.workspace.showMessage('Porting compileActiveContract()...');
-    // return compiler.compile(contractsCollection.getDefaultContractsForCompilation(compilationOptimisation),
+    const packagesPath = util_1.formatPath(project.packagesDir);
+    const defaultContracts = contractsCollection.getDefaultContractsForCompilation(compilationOptimisation);
+    console.log(defaultContracts); // TODO: Port point ajs
+    // return compiler.compile(
+    // defaultContracts,
     //         diagnosticCollection,
     //         project.projectPackage.build_dir,
     //         project.projectPackage.absoluletPath,
     //         null,
     //         packagesPath,
-    //         contract.absolutePath);
+    //         contract.absolutePath
+    //         );
     // TODO: Remove after returning something real.
     return new Promise(res => { res([]); });
 }
@@ -427,15 +435,15 @@ class ContractCollection {
     containsContract(contractPath) {
         return this.contracts.findIndex((contract) => { return contract.absolutePath === contractPath; }) > -1;
     }
-    //     public getDefaultContractsForCompilation(optimizeCompilationRuns = 200) {
-    //         const compilerOutputSelection = {
-    //             '*': {
-    //                 '': ['ast'],
-    //                 '*': ['abi', 'devdoc', 'userdoc', 'metadata', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates'],
-    //             },
-    //         };
-    //         return this.getContractsForCompilation(true, optimizeCompilationRuns, compilerOutputSelection);
-    //     }
+    getDefaultContractsForCompilation(optimizeCompilationRuns = 200) {
+        const compilerOutputSelection = {
+            '*': {
+                '': ['ast'],
+                '*': ['abi', 'devdoc', 'userdoc', 'metadata', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates'],
+            },
+        };
+        return this.getContractsForCompilation(true, optimizeCompilationRuns, compilerOutputSelection);
+    }
     //     public getDefaultContractsForCompilationDiagnostics() {
     //         const compilerOutputSelection = {
     //             '*': {
@@ -445,25 +453,24 @@ class ContractCollection {
     //         };
     //         return this.getContractsForCompilation(false, 0, compilerOutputSelection);
     //     }
-    //     public getContractsForCompilation(optimizeCompilation: boolean, optimizeCompilationRuns: number, outputSelection) {
-    //         const contractsForCompilation = {};
-    //         this.contracts.forEach(contract => {
-    //             contractsForCompilation[contract.absolutePath] = {content: contract.code};
-    //         });
-    //         const compilation = {
-    //             language: 'Solidity',
-    //             settings:
-    //             {
-    //                 optimizer: {
-    //                     enabled: optimizeCompilation,
-    //                     runs: optimizeCompilationRuns,
-    //                 },
-    //                 outputSelection: outputSelection,
-    //             },
-    //             sources : contractsForCompilation,
-    //         };
-    //         return compilation;
-    //     }
+    getContractsForCompilation(optimizeCompilation, optimizeCompilationRuns, outputSelection) {
+        const contractsForCompilation = {};
+        this.contracts.forEach(contract => {
+            contractsForCompilation[contract.absolutePath] = { content: contract.code };
+        });
+        const compilation = {
+            language: 'Solidity',
+            settings: {
+                optimizer: {
+                    enabled: optimizeCompilation,
+                    runs: optimizeCompilationRuns,
+                },
+                outputSelection: outputSelection,
+            },
+            sources: contractsForCompilation,
+        };
+        return compilation;
+    }
     addContractAndResolveImports(contractPath, code, project) {
         const contract = this.addContract(contractPath, code);
         if (contract !== null) {

@@ -17,16 +17,16 @@ export class ContractCollection {
       return this.contracts.findIndex((contract: Contract) => { return contract.absolutePath === contractPath; }) > -1;
     }
 
-//     public getDefaultContractsForCompilation(optimizeCompilationRuns = 200) {
-//         const compilerOutputSelection = {
-//             '*': {
-//                 '': ['ast'],
-//                 '*': ['abi', 'devdoc', 'userdoc', 'metadata', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates'],
-//             },
-//         };
+    public getDefaultContractsForCompilation(optimizeCompilationRuns = 200) {
+      const compilerOutputSelection = {
+        '*': {
+          '': ['ast'],
+          '*': ['abi', 'devdoc', 'userdoc', 'metadata', 'evm.bytecode', 'evm.deployedBytecode', 'evm.methodIdentifiers', 'evm.gasEstimates'],
+        },
+      };
 
-//         return this.getContractsForCompilation(true, optimizeCompilationRuns, compilerOutputSelection);
-//     }
+      return this.getContractsForCompilation(true, optimizeCompilationRuns, compilerOutputSelection);
+    }
 
 //     public getDefaultContractsForCompilationDiagnostics() {
 //         const compilerOutputSelection = {
@@ -39,25 +39,25 @@ export class ContractCollection {
 //         return this.getContractsForCompilation(false, 0, compilerOutputSelection);
 //     }
 
-//     public getContractsForCompilation(optimizeCompilation: boolean, optimizeCompilationRuns: number, outputSelection) {
-//         const contractsForCompilation = {};
-//         this.contracts.forEach(contract => {
-//             contractsForCompilation[contract.absolutePath] = {content: contract.code};
-//         });
-//         const compilation = {
-//             language: 'Solidity',
-//             settings:
-//             {
-//                 optimizer: {
-//                     enabled: optimizeCompilation,
-//                     runs: optimizeCompilationRuns,
-//                 },
-//                 outputSelection: outputSelection,
-//             },
-//             sources : contractsForCompilation,
-//         };
-//         return compilation;
-//     }
+    public getContractsForCompilation(optimizeCompilation: boolean, optimizeCompilationRuns: number, outputSelection) {
+      const contractsForCompilation = {};
+      this.contracts.forEach(contract => {
+        contractsForCompilation[contract.absolutePath] = {content: contract.code};
+      });
+      const compilation = {
+        language: 'Solidity',
+        settings:
+        {
+          optimizer: {
+            enabled: optimizeCompilation,
+            runs: optimizeCompilationRuns,
+          },
+          outputSelection: outputSelection,
+        },
+        sources : contractsForCompilation,
+      };
+      return compilation;
+    }
 
 
     public addContractAndResolveImports(contractPath: string, code: string, project: Project) {

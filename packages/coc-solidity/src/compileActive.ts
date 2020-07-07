@@ -3,7 +3,7 @@ import { Compiler } from './compiler';
 import { ContractCollection } from './model/contractsCollection';
 import { URI } from 'vscode-uri'
 import { initialiseProject } from './projectService';
-// import { formatPath } from './util';
+import { formatPath } from './util';
 
 let diagnosticCollection: coc.DiagnosticCollection;
 
@@ -41,19 +41,19 @@ export async function compileActiveContract(compiler: Compiler): Promise<Array<s
   const projectPath = URI.parse(projectUri).fsPath
   const project = initialiseProject(projectPath, packageDefaultDependenciesDirectory!, packageDefaultDependenciesContractsDirectory!);
   const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
-  console.log(contract) // TODO: Port point ajs
-  // const packagesPath = formatPath(project.packagesDir);
+  const packagesPath = formatPath(project.packagesDir);
 
-  // TODO: Remove when porting continues.
-  coc.workspace.showMessage('Porting compileActiveContract()...')
-
-  // return compiler.compile(contractsCollection.getDefaultContractsForCompilation(compilationOptimisation),
+  const defaultContracts = contractsCollection.getDefaultContractsForCompilation(compilationOptimisation)
+  console.log(defaultContracts) // TODO: Port point ajs
+  // return compiler.compile(
+  // defaultContracts,
   //         diagnosticCollection,
   //         project.projectPackage.build_dir,
   //         project.projectPackage.absoluletPath,
   //         null,
   //         packagesPath,
-  //         contract.absolutePath);
+  //         contract.absolutePath
+  //         );
 
   // TODO: Remove after returning something real.
   return new Promise(res => { res([]) })
