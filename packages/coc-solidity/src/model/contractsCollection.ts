@@ -64,7 +64,6 @@ export class ContractCollection {
       const contract = this.addContract(contractPath, code);
       if (contract !== null) {
         contract.resolveImports();
-        console.log('contract imports', contract.imports) // TODO: Port point ajs
         contract.imports.forEach(foundImport => {
           if (fs.existsSync(foundImport)) {
             if (!this.containsContract(foundImport)) {

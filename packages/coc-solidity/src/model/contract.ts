@@ -12,9 +12,6 @@ export class Contract {
       this.absolutePath = this.formatContractPath(absoulePath);
       this.code = code;
       this.imports = new Array<string>();
-
-      this.packagePath = '';
-      this.abi = '';
     }
 
 //     public getAllImportFromPackages() {

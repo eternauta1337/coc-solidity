@@ -40,21 +40,17 @@ export async function compileActiveContract(compiler: Compiler): Promise<Array<s
   const projectUri = coc.workspace.workspaceFolders[0].uri
   const projectPath = URI.parse(projectUri).fsPath
   const project = initialiseProject(projectPath, packageDefaultDependenciesDirectory!, packageDefaultDependenciesContractsDirectory!);
-  const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project);
+  const contract = contractsCollection.addContractAndResolveImports(contractPath, contractCode, project)!;
   const packagesPath = formatPath(project.packagesDir);
 
   const defaultContracts = contractsCollection.getDefaultContractsForCompilation(compilationOptimisation)
-  console.log(defaultContracts) // TODO: Port point ajs
-  // return compiler.compile(
-  // defaultContracts,
-  //         diagnosticCollection,
-  //         project.projectPackage.build_dir,
-  //         project.projectPackage.absoluletPath,
-  //         null,
-  //         packagesPath,
-  //         contract.absolutePath
-  //         );
-
-  // TODO: Remove after returning something real.
-  return new Promise(res => { res([]) })
+  return compiler.compile(
+    defaultContracts,
+    diagnosticCollection,
+    project.projectPackage.build_dir,
+    project.projectPackage.absoluletPath,
+    null,
+    packagesPath,
+    contract.absolutePath
+  );
 }
