@@ -47,6 +47,7 @@ export async function activate(context: coc.ExtensionContext): Promise<void> {
     coc.workspace.showMessage('coc-solidity.compile.active');
 
     const compiledResults = await compileActiveContract(compiler);
+    console.log('>>> compiledResults', compiledResults)
       // autoCodeGenerateAfterCompilation(compiledResults, null, diagnosticCollection);
       // return compiledResults;
   }));

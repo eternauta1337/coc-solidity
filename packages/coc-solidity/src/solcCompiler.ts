@@ -72,7 +72,7 @@ export class SolcCompiler {
   }
 
   public intialiseCompiler(localInstallationPath: string, remoteInstallationVersion: string, enableNodeCompiler: boolean): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>(async (resolve, reject) => {
       try {
         if (this.initialisedAlready(localInstallationPath, remoteInstallationVersion, enableNodeCompiler)) {
           resolve();
@@ -80,7 +80,11 @@ export class SolcCompiler {
           let solidityfile = '';
           this.enableNodeCompilerSetting = enableNodeCompiler;
           if (enableNodeCompiler && this.isInstalledSolcUsingNode(this.rootPath)) {
-            solidityfile = require(this.getLocalSolcNodeInstallation());
+            const solcjsPath = this.getLocalSolcNodeInstallation()
+            console.log(`>>> solcjsPath`, solcjsPath)
+            console.log(`>>> cwd`, __dirname)
+            solidityfile = await import(/* webpackChunkName: 'solcjs' */solcjsPath);
+            console.log(`>>> solidityFile`, solidityfile)
             this.localSolc = solc.setupMethods(solidityfile);
             this.currentCompilerType = compilerType.localNode;
             this.currentCompilerSetting = null;
